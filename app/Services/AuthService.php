@@ -14,7 +14,6 @@ class AuthService
 
     public function login(array $credentials): void
     {
-        // Cek apakah email terdaftar dan akun aktif
         $user = $this->userRepository->findActiveByEmail($credentials['email']);
 
         if (! $user) {
@@ -23,14 +22,15 @@ class AuthService
             ]);
         }
 
-        // Attempt login via Laravel Auth
-        if (! Auth::attempt($credentials, $credentials['remember'] ?? false)) {
+        $remember = $credentials['remember'] ?? false;
+        unset($credentials['remember']);
+
+        if (! Auth::attempt($credentials, $remember)) {
             throw ValidationException::withMessages([
                 'email' => 'Email atau password salah.',
             ]);
         }
 
-        // Regenerate session untuk keamanan
         request()->session()->regenerate();
     }
 
@@ -41,9 +41,6 @@ class AuthService
         request()->session()->regenerateToken();
     }
 
-    /**
-     * Redirect setelah login berdasarkan role.
-     */
     public function redirectByRole(): string
     {
         return match(Auth::user()->role) {

@@ -37,9 +37,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 // ── HR Staff ────────────────────────────────────────────────────────────────
 Route::prefix('staff')->name('staff.')->middleware(['auth', 'role:hr_staff'])->group(function () {
     Route::get('/dashboard', [StaffDashboard::class, 'index'])->name('dashboard');
-    Route::resource('tasks', StaffTaskController::class) ->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('tasks', StaffTaskController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::patch('/tasks/{task}/complete', [StaffTaskController::class, 'complete'])->name('tasks.complete');
     Route::get('/history', [StaffTaskController::class, 'history'])->name('tasks.history');
+    Route::get('/assign-tasks', [StaffTaskController::class, 'assignIndex'])->name('assign.index');
+    Route::get('/assistant-progress', [StaffTaskController::class, 'assistantProgress'])->name('assistant-progress');
 });
 
 // ── HR Assistant ─────────────────────────────────────────────────────────────
