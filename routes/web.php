@@ -19,14 +19,12 @@ Route::get('/login', [LoginController::class, 'showForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// ── Admin ───────────────────────────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
     Route::resource('users', UserController::class) ->only(['index', 'store', 'update', 'destroy']);
+    Route::patch('/users/{user}/password', [UserController::class, 'updatePassword'])->name('users.password');
     Route::resource('default-tasks', DefaultTaskController::class) ->only(['index', 'store', 'update', 'destroy']);
     Route::resource('tasks', AdminTaskController::class) ->only(['index', 'store', 'update', 'destroy']);
-
-    // Laporan & Ranking
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/productivity', [ReportController::class, 'productivity'])->name('productivity');
         Route::get('/history', [ReportController::class, 'history'])->name('history');
