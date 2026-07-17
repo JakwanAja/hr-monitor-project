@@ -51,6 +51,8 @@ Route::prefix('assistant')->name('assistant.')->middleware(['auth', 'role:hr_ass
     Route::get('/dashboard', [AssistantDashboard::class, 'index'])->name('dashboard');
     Route::resource('tasks', AssistantTaskController::class) ->only(['index', 'store']);
     Route::patch('/tasks/{task}/complete', [AssistantTaskController::class, 'complete'])->name('tasks.complete');
+    Route::delete('/tasks/{task}', [AssistantTaskController::class, 'destroy'])->name('tasks.destroy');
+    Route::patch('/tasks/{task}', [AssistantTaskController::class, 'update'])->name('tasks.update');
     Route::get('/history', [AssistantTaskController::class, 'history'])->name('tasks.history');
 });
 

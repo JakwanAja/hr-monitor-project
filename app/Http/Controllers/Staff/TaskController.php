@@ -69,11 +69,54 @@ class TaskController extends Controller
         }
     }
 
-    // Stub — akan diisi di Phase 3.3 & 3.4
-    public function index() { return 'Coming soon...'; }
-    public function store(Request $request) { return 'Coming soon...'; }
-    public function update(Request $request, Task $task) { return 'Coming soon...'; }
-    public function destroy(Task $task) { return 'Coming soon...'; }
+   // ── Self Task (Tugas Mandiri) ────────────────────────
+    public function index()
+    {
+        $tasks = $this->taskService->getSelfTasksToday(Auth::id());
+        return view('staff.tasks.index', compact('tasks'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title'       => ['required', 'string', 'max:200'],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        try {
+            $this->taskService->createSelfTask($validated);
+            return redirect()->route('staff.tasks.index')
+                ->with('success', 'Tugas mandiri berhasil ditambahkan.');
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        }
+    }
+
+    public function update(Request $request, Task $task)
+    {
+        $validated = $request->validate([
+            'title'       => ['required', 'string', 'max:200'],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        try {
+            $this->taskService->updateSelfTask($task, $validated);
+            return redirect()->route('staff.tasks.index')
+                ->with('success', 'Tugas mandiri berhasil diperbarui.');
+        } catch (ValidationException $e) {
+            return back()->with('error', $e->errors()['task'][0] ?? 'Gagal memperbarui tugas.');
+        }
+    }
+    public function destroy(Task $task)
+    {
+        try {
+            $this->taskService->deleteSelfTask($task);
+            return redirect()->route('staff.tasks.index')
+                ->with('success', 'Tugas mandiri berhasil dihapus.');
+        } catch (ValidationException $e) {
+            return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menghapus tugas.');
+        }
+    }
     public function complete(Request $request, Task $task) { return 'Coming soon...'; }
     public function history() { return 'Coming soon...'; }
     public function assistantProgress() { return 'Coming soon...'; }

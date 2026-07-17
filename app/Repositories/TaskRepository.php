@@ -88,4 +88,20 @@ class TaskRepository
             ->where('is_completed', 1)
             ->exists();
     }
+
+    public function getSelfTasksToday(int $userId): Collection
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+
+        return $query
+            ->with(['assignments' => function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            }])
+            ->where('created_by', $userId)
+            ->where('type', 'self')
+            ->whereDate('task_date', Carbon::today())
+            ->orderByDesc('created_at')
+            ->get();
+    }
 }
