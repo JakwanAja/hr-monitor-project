@@ -19,6 +19,7 @@ Route::get('/login', [LoginController::class, 'showForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+// ── ADMIN ────────────────────────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
     Route::resource('users', UserController::class) ->only(['index', 'store', 'update', 'destroy']);
@@ -35,10 +36,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 // ── HR Staff ────────────────────────────────────────────────────────────────
 Route::prefix('staff')->name('staff.')->middleware(['auth', 'role:hr_staff'])->group(function () {
     Route::get('/dashboard', [StaffDashboard::class, 'index'])->name('dashboard');
-    Route::resource('tasks', StaffTaskController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('tasks', StaffTaskController::class) ->only(['index', 'store', 'update', 'destroy']);
     Route::patch('/tasks/{task}/complete', [StaffTaskController::class, 'complete'])->name('tasks.complete');
     Route::get('/history', [StaffTaskController::class, 'history'])->name('tasks.history');
-    Route::get('/assign-tasks', [StaffTaskController::class, 'assignIndex'])->name('assign.index');
+    Route::get('/assign-tasks', [StaffTaskController::class, 'assignIndex'])->name('assign.index');    
+    Route::post('/assign-tasks', [StaffTaskController::class, 'assignStore'])->name('assign.store');
+    Route::patch('/assign-tasks/{task}', [StaffTaskController::class, 'assignUpdate'])->name('assign.update');
+    Route::delete('/assign-tasks/{task}', [StaffTaskController::class, 'assignDestroy'])->name('assign.destroy');
     Route::get('/assistant-progress', [StaffTaskController::class, 'assistantProgress'])->name('assistant-progress');
 });
 
