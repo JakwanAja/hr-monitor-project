@@ -136,7 +136,6 @@ class TaskService
             'description' => $data['description'] ?? null,
         ]);
     }
-
     public function deleteSelfTask(Task $task): bool
     {
         // Pastikan task milik sendiri
@@ -145,7 +144,6 @@ class TaskService
                 'task' => 'Anda tidak memiliki akses untuk menghapus tugas ini.',
             ]);
         }
-
         // Cegah hapus jika sudah selesai
         if ($this->taskRepository->hasAnyCompleted($task->id)) {
             throw ValidationException::withMessages([
@@ -161,11 +159,26 @@ class TaskService
         return $this->taskRepository->getSelfTasksToday($userId);
     }
 
+    public function completeTask(Task $task, ?string $note): bool
+    {
+        $assignment = $this->taskRepository->findAssignment($task->id, Auth::id());
+
+        if (! $assignment) {
+            throw ValidationException::withMessages([
+                'task' => 'Anda tidak memiliki akses untuk menyelesaikan tugas ini.',
+            ]);
+        }
+
+        if ($assignment->is_completed) {
+            throw ValidationException::withMessages([
+                'task' => 'Tugas ini sudah ditandai selesai.',
+            ]);
+        }
+        return $this->taskRepository->completeAssignment($assignment, $note);
+    }
 
 
 
-
-    
     // ── Private Helpers ──────────────────────────────────
     private function validateAssignees(array $userIds): void
     {

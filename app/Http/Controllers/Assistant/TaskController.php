@@ -69,6 +69,16 @@ class TaskController extends Controller
 
     public function complete(Request $request, Task $task)
     {
-        return 'Coming soon...';
+        $request->validate([
+            'note' => ['nullable', 'string', 'max:500'],
+        ]);
+    
+        try {
+            $this->taskService->completeTask($task, $request->note);
+            return redirect()->route('assistant.tasks.index')
+                ->with('success', 'Tugas berhasil ditandai selesai.');
+        } catch (ValidationException $e) {
+            return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
+        }
     }
 }

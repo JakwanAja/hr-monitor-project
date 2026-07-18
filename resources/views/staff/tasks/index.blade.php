@@ -32,7 +32,7 @@
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-48">Judul</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600">Deskripsi</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-28">Status</th>
-                <th class="text-right px-6 py-3.5 font-semibold text-gray-600 w-20">Aksi</th>
+                <th class="text-right px-6 py-3.5 font-semibold text-gray-600 w-32">Aksi</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
@@ -51,7 +51,11 @@
                     <td class="px-6 py-4">
                         <div class="truncate max-w-[280px] text-gray-500"
                              title="{{ $task->description ?? '-' }}">
-                            {{ $task->description ?? '-' }}
+                            @if($task->description)
+                                {!! linkify(e($task->description)) !!}
+                            @else
+                                -
+                            @endif
                         </div>
                     </td>
                     <td class="px-6 py-4 w-28">
@@ -72,9 +76,21 @@
                             </span>
                         @endif
                     </td>
-                    <td class="px-6 py-4 w-20">
+                    {{-- [*] Kolom Aksi yang diperbarui --}}
+                    <td class="px-6 py-4 w-32">
                         <div class="flex items-center justify-end gap-2 whitespace-nowrap">
                             @if(!$isDone)
+                                {{-- Tombol Selesai --}}
+                                <button
+                                    onclick="openCompleteModal({{ $task->id }}, '{{ addslashes($task->title) }}')"
+                                    class="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition"
+                                    title="Tandai Selesai">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </button>
+                                {{-- Tombol Edit --}}
                                 <button
                                     onclick="openEditModal({{ $task->id }}, '{{ addslashes($task->title) }}', '{{ addslashes($task->description ?? '') }}')"
                                     class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
@@ -84,6 +100,7 @@
                                               d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
                                 </button>
+                                {{-- Tombol Hapus --}}
                                 <button
                                     onclick="openDeleteModal({{ $task->id }}, '{{ addslashes($task->title) }}')"
                                     class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
@@ -94,7 +111,7 @@
                                     </svg>
                                 </button>
                             @else
-                                <span class="text-xs text-gray-400 italic">Terkunci</span>
+                                <span class="text-xs text-gray-400 italic">Selesai</span>
                             @endif
                         </div>
                     </td>
@@ -234,6 +251,55 @@
     </div>
 </div>
 
+{{-- ── MODAL CHECKLIST SELESAI ────────────────────────── --}}
+<div id="modal-complete" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <div>
+                <h3 class="text-base font-semibold text-gray-800">Tandai Selesai</h3>
+                <p id="complete-task-title" class="text-xs text-gray-500 mt-0.5"></p>
+            </div>
+            <button onclick="document.getElementById('modal-complete').classList.add('hidden')"
+                    class="text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <form id="form-complete" action="" method="POST" class="px-6 py-5 space-y-4">
+            @csrf
+            @method('PATCH')
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Catatan Penyelesaian
+                    <span class="text-gray-400 font-normal">(opsional)</span>
+                </label>
+                <textarea name="note" rows="4" placeholder="Tuliskan laporan singkat atau catatan penyelesaian tugas ini..."
+                          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
+                                 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"></textarea>
+                <p class="mt-1 text-xs text-gray-400">
+                    Setelah ditandai selesai, tugas tidak dapat diubah kembali.
+                </p>
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+                <button type="button"
+                        onclick="document.getElementById('modal-complete').classList.add('hidden')"
+                        class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium">
+                    Batal
+                </button>
+                <button type="submit"
+                        class="flex items-center gap-2 px-5 py-2 bg-green-600 hover:bg-green-700
+                               text-white text-sm font-medium rounded-lg transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Selesai
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     function openEditModal(id, title, description) {
         document.getElementById('edit-title').value = title;
@@ -247,6 +313,13 @@
         document.getElementById('form-delete').action = `/staff/tasks/${id}`;
         document.getElementById('modal-delete').classList.remove('hidden');
     }
+    
+    function openCompleteModal(id, title) {
+    document.getElementById('complete-task-title').textContent = title;
+    document.getElementById('form-complete').action = `/staff/tasks/${id}/complete`;
+    document.getElementById('modal-complete').classList.remove('hidden');
+    }
+
 </script>
 
 @endsection

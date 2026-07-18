@@ -104,4 +104,24 @@ class TaskRepository
             ->orderByDesc('created_at')
             ->get();
     }
+
+    public function findAssignment(int $taskId, int $userId): ?TaskAssignment
+    {
+        /** @var Builder $query */
+        $query = TaskAssignment::query();
+
+        return $query
+            ->where('task_id', $taskId)
+            ->where('user_id', $userId)
+            ->first();
+    }
+
+    public function completeAssignment(TaskAssignment $assignment, ?string $note): bool
+    {
+        return (bool) $assignment->update([
+            'is_completed' => 1,
+            'completed_at' => now(),
+            'note'         => $note,
+        ]);
+    }
 }

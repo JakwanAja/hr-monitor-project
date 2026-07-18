@@ -117,7 +117,20 @@ class TaskController extends Controller
             return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menghapus tugas.');
         }
     }
-    public function complete(Request $request, Task $task) { return 'Coming soon...'; }
+    public function complete(Request $request, Task $task)
+    {
+        $request->validate([
+            'note' => ['nullable', 'string', 'max:500'],
+        ]);
+    
+        try {
+            $this->taskService->completeTask($task, $request->note);
+            return redirect()->route('staff.tasks.index')
+                ->with('success', 'Tugas berhasil ditandai selesai.');
+        } catch (ValidationException $e) {
+            return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
+        }
+    }
     public function history() { return 'Coming soon...'; }
     public function assistantProgress() { return 'Coming soon...'; }
 }

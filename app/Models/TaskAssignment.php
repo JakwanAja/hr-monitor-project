@@ -13,16 +13,17 @@ class TaskAssignment extends Model
         'user_id',
         'is_completed',
         'completed_at',
+        'note',
     ];
-
     protected function casts(): array
     {
         return [
             'is_completed' => 'boolean',
             'completed_at' => 'datetime',
+            'note'         => 'string',
         ];
     }
-
+    
     // ── Relasi ──────────────────────────────────────────
 
     public function task()

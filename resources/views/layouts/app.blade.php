@@ -9,19 +9,11 @@
 </head>
 <body class="bg-[#F1F5F9] font-sans antialiased h-full">
 <div class="flex h-screen overflow-hidden">
-
-    {{-- ── SIDEBAR ─────────────────────────────────────── --}}
     <aside class="w-[260px] flex-shrink-0 bg-[#1C2434] flex flex-col h-full overflow-y-auto">
-
         {{-- Logo --}}
         <div class="flex items-center gap-3 px-6 py-5 border-b border-white/10">
-            <div class="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center flex-shrink-0">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                </svg>
-            </div>
-            <span class="text-white font-bold text-lg tracking-tight">HR-DWMS</span>
+            <img src="{{ asset('images/seveninc_logo.png') }}" alt="Seveninc Logo" class="w-9 h-9 object-contain flex-shrink-0">
+            <span class="text-white font-bold text-2xl tracking-tight">Seven Inc</span>
         </div>
 
         {{-- Navigation --}}
