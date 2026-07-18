@@ -31,6 +31,7 @@
             <tr class="bg-gray-50 border-b border-gray-200">
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-48">Judul</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600">Deskripsi</th>
+                <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-32">Sumber</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-28">Status</th>
                 <th class="text-right px-6 py-3.5 font-semibold text-gray-600 w-32">Aksi</th>
             </tr>
@@ -42,74 +43,100 @@
                     $isDone     = $assignment?->is_completed;
                 @endphp
                 <tr class="hover:bg-gray-50 transition">
+
+                    {{-- Judul --}}
                     <td class="px-6 py-4 w-48">
                         <div class="truncate max-w-[170px] font-medium text-gray-800"
-                             title="{{ $task->title }}">
+                            title="{{ $task->title }}">
                             {{ $task->title }}
                         </div>
                     </td>
+
+                    {{-- Deskripsi --}}
                     <td class="px-6 py-4">
-                        <div class="truncate max-w-[280px] text-gray-500"
-                             title="{{ $task->description ?? '-' }}">
-                            @if($task->description)
-                                {!! linkify(e($task->description)) !!}
-                            @else
-                                -
-                            @endif
+                        <div class="truncate max-w-[220px] text-gray-500"
+                            title="{{ $task->description ?? '-' }}">
+                            {{ $task->description ?? '-' }}
                         </div>
                     </td>
+
+                    {{-- Sumber --}}
+                    <td class="px-6 py-4 w-32">
+                        @if($task->type === 'self')
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                                        bg-gray-100 text-gray-600">
+                                Mandiri
+                            </span>
+                        @elseif($task->type === 'assigned')
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                                        bg-blue-50 text-blue-700"
+                                title="Dari: {{ $task->creator?->name ?? 'Admin' }}">
+                                {{ $task->creator?->name ?? 'Admin' }}
+                            </span>
+                        @elseif($task->type === 'default')
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                                        bg-purple-50 text-purple-700">
+                                Rutin
+                            </span>
+                        @endif
+                    </td>
+
+                    {{-- Status --}}
                     <td class="px-6 py-4 w-28">
                         @if($isDone)
                             <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full
-                                         text-xs font-medium bg-green-50 text-green-700">
+                                        text-xs font-medium bg-green-50 text-green-700">
                                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
-                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clip-rule="evenodd"/>
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clip-rule="evenodd"/>
                                 </svg>
                                 Selesai
                             </span>
                         @else
                             <span class="inline-flex items-center px-2.5 py-1 rounded-full
-                                         text-xs font-medium bg-yellow-50 text-yellow-700">
+                                        text-xs font-medium bg-yellow-50 text-yellow-700">
                                 Belum Selesai
                             </span>
                         @endif
                     </td>
-                    {{-- [*] Kolom Aksi yang diperbarui --}}
+
+                    {{-- Aksi --}}
                     <td class="px-6 py-4 w-32">
                         <div class="flex items-center justify-end gap-2 whitespace-nowrap">
                             @if(!$isDone)
-                                {{-- Tombol Selesai --}}
+                                {{-- Tombol Selesai — selalu ada untuk semua tipe task --}}
                                 <button
                                     onclick="openCompleteModal({{ $task->id }}, '{{ addslashes($task->title) }}')"
                                     class="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition"
                                     title="Tandai Selesai">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M5 13l4 4L19 7"/>
+                                            d="M5 13l4 4L19 7"/>
                                     </svg>
                                 </button>
-                                {{-- Tombol Edit --}}
-                                <button
-                                    onclick="openEditModal({{ $task->id }}, '{{ addslashes($task->title) }}', '{{ addslashes($task->description ?? '') }}')"
-                                    class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
-                                    title="Edit">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                </button>
-                                {{-- Tombol Hapus --}}
-                                <button
-                                    onclick="openDeleteModal({{ $task->id }}, '{{ addslashes($task->title) }}')"
-                                    class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                                    title="Hapus">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                    </svg>
-                                </button>
+
+                                {{-- Edit & Hapus hanya untuk tugas mandiri --}}
+                                @if($task->type === 'self')
+                                    <button
+                                        onclick="openEditModal({{ $task->id }}, '{{ addslashes($task->title) }}', '{{ addslashes($task->description ?? '') }}')"
+                                        class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
+                                        title="Edit">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                    </button>
+                                    <button
+                                        onclick="openDeleteModal({{ $task->id }}, '{{ addslashes($task->title) }}')"
+                                        class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                                        title="Hapus">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                @endif
                             @else
                                 <span class="text-xs text-gray-400 italic">Selesai</span>
                             @endif
@@ -118,8 +145,8 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4" class="px-6 py-12 text-center text-gray-400 text-sm">
-                        Belum ada tugas mandiri hari ini.
+                    <td colspan="5" class="px-6 py-12 text-center text-gray-400 text-sm">
+                        Belum ada tugas hari ini.
                     </td>
                 </tr>
             @endforelse

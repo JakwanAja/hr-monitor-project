@@ -17,7 +17,7 @@ class TaskController extends Controller
 
     public function index()
     {
-        $tasks = $this->taskService->getSelfTasksToday(Auth::id());
+        $tasks = $this->taskService->getAllTasksForUserToday(Auth::id());
         return view('assistant.tasks.index', compact('tasks'));
     }
     public function update(Request $request, Task $task)
@@ -62,9 +62,11 @@ class TaskController extends Controller
         }
     }
 
-    public function history()
+    public function history(Request $request)
     {
-        return 'Coming soon...';
+        $date  = $request->query('date');
+        $tasks = $this->taskService->getHistoryForUser(Auth::id(), $date);
+        return view('assistant.history.index', compact('tasks', 'date'));
     }
 
     public function complete(Request $request, Task $task)
@@ -81,4 +83,5 @@ class TaskController extends Controller
             return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
         }
     }
+
 }

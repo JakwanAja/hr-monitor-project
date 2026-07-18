@@ -27,7 +27,7 @@
 
             {{-- Header Form --}}
             <div class="mb-8 text-center">
-                <img src="{{ asset('images/logo.png') }}" alt="HR-DWMS" class="w-24 mx-auto lg:hidden mb-4">
+                <img src="{{ asset('images/seveninc_logo.png') }}" alt="HR-DWMS" class="w-24 mx-auto lg:hidden mb-4">
                 <div class="flex justify-center mb-3">
                     <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center">
                         <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

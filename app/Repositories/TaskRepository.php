@@ -124,4 +124,68 @@ class TaskRepository
             'note'         => $note,
         ]);
     }
+
+    public function getAllTasksForUserToday(int $userId): Collection
+    {
+    /** @var Builder $query */
+    $query = $this->model->newQuery();
+
+    return $query
+        ->with(['assignments' => function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        }, 'creator:id,name'])
+        ->whereHas('assignments', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        })
+        ->whereDate('task_date', Carbon::today())
+        ->orderByDesc('created_at')
+        ->get();
+    }
+
+    public function getHistoryForUser(int $userId, ?string $date = null): Collection
+{
+    /** @var Builder $query */
+    $query = $this->model->newQuery();
+
+    return $query
+        ->with(['assignments' => function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        }, 'creator:id,name'])
+        ->whereHas('assignments', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        })
+        ->when($date, function ($q) use ($date) {
+            $q->whereDate('task_date', $date);
+        })
+        ->orderByDesc('task_date')
+        ->orderByDesc('created_at')
+        ->get();
+}
+    public function getHistoryForAdmin(?int $userId = null, ?string $date = null): Collection
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+
+        return $query
+            ->with([
+                'assignments' => function ($q) use ($userId) {
+                    if ($userId) {
+                        $q->where('user_id', $userId);
+                    }
+                },
+                'assignedUsers:id,name,role',
+                'creator:id,name',
+            ])
+            ->when($userId, function ($q) use ($userId) {
+                $q->whereHas('assignments', function ($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                });
+            })
+            ->when($date, function ($q) use ($date) {
+                $q->whereDate('task_date', $date);
+            })
+            ->orderByDesc('task_date')
+            ->orderByDesc('created_at')
+            ->get();
+    }
 }

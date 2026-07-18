@@ -72,7 +72,7 @@ class TaskController extends Controller
    // ── Self Task (Tugas Mandiri) ────────────────────────
     public function index()
     {
-        $tasks = $this->taskService->getSelfTasksToday(Auth::id());
+        $tasks = $this->taskService->getAllTasksForUserToday(Auth::id());
         return view('staff.tasks.index', compact('tasks'));
     }
 
@@ -131,6 +131,12 @@ class TaskController extends Controller
             return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
         }
     }
-    public function history() { return 'Coming soon...'; }
+    public function history(Request $request)
+    {
+        $date  = $request->query('date');
+        $tasks = $this->taskService->getHistoryForUser(Auth::id(), $date);
+        return view('staff.history.index', compact('tasks', 'date'));
+    }
+        
     public function assistantProgress() { return 'Coming soon...'; }
 }

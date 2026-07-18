@@ -177,7 +177,10 @@ class TaskService
         return $this->taskRepository->completeAssignment($assignment, $note);
     }
 
-
+    public function getAllTasksForUserToday(int $userId): Collection
+    {
+        return $this->taskRepository->getAllTasksForUserToday($userId);
+    }
 
     // ── Private Helpers ──────────────────────────────────
     private function validateAssignees(array $userIds): void
@@ -208,7 +211,6 @@ class TaskService
             ]);
         }
     }
-
     private function attachAssigneesAndNotify(Task $task, array $userIds): void
     {
         $assignerName = Auth::user()->name;
@@ -221,5 +223,14 @@ class TaskService
                 $user->notify(new TaskAssigned($task, $assignerName));
             }
         }
+    }
+    public function getHistoryForUser(int $userId, ?string $date = null): Collection
+    {
+        return $this->taskRepository->getHistoryForUser($userId, $date);
+    }
+
+    public function getHistoryForAdmin(?int $userId = null, ?string $date = null): Collection
+    {
+        return $this->taskRepository->getHistoryForAdmin($userId, $date);
     }
 }
