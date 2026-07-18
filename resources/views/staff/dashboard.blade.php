@@ -9,5 +9,6 @@
 @endsection
 
 @section('content')
-    <p class="text-gray-500 text-sm">Staff Dashboard — Phase 3 coming soon.</p>
+    @include('components.notification-popup')
+    <p class="text-gray-500 text-sm">Staff Dashboard — Phase 5 coming soon.</p>
 @endsection
