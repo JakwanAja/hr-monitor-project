@@ -14,9 +14,11 @@ class TaskController extends Controller
         protected TaskService $taskService
     ) {}
 
+    // ── Halaman 1: Tugas dari Admin ──────────────────────
+
     public function index()
     {
-        $tasks         = $this->taskService->getAllForAdmin();
+        $tasks           = $this->taskService->getTasksCreatedByAdmin();
         $assignableUsers = $this->taskService->getAssignableUsers();
         return view('admin.tasks.index', compact('tasks', 'assignableUsers'));
     }
@@ -65,6 +67,36 @@ class TaskController extends Controller
                 ->with('success', 'Tugas berhasil dihapus.');
         } catch (ValidationException $e) {
             return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menghapus tugas.');
+        }
+    }
+
+    // ── Halaman 2: Tugas HR Staff ────────────────────────
+
+    public function staffTasks()
+    {
+        $tasks = $this->taskService->getTasksByStaff();
+        return view('admin.tasks.staff', compact('tasks'));
+    }
+
+    // ── Halaman 3: Tugas HR Assistant ────────────────────
+
+    public function assistantTasks()
+    {
+        $tasks = $this->taskService->getAllTasksForAssistant();
+        return view('admin.tasks.assistant', compact('tasks'));
+    }
+
+    // ── Force Destroy (Admin hapus task siapapun) ────────
+
+    public function forceDestroy(Task $task)
+    {
+        $redirect = url()->previous();
+
+        try {
+            $this->taskService->forceDeleteTask($task);
+            return redirect($redirect)->with('success', 'Tugas berhasil dihapus.');
+        } catch (ValidationException $e) {
+            return redirect($redirect)->with('error', $e->errors()['task'][0] ?? 'Gagal menghapus tugas.');
         }
     }
 }

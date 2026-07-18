@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen Tugas')
-@section('page-title', 'Manajemen Tugas')
-@section('page-subtitle', 'Buat dan distribusikan tugas harian')
+@section('title', 'Buat Tugas')
+@section('page-title', 'Buat Tugas')
+@section('page-subtitle', 'Distribusikan tugas harian kepada HR Staff dan HR Assistant')
 
 @section('sidebar')
     @include('components.sidebar-admin')
@@ -10,7 +10,6 @@
 
 @section('content')
 
-{{-- Header + Tombol Tambah --}}
 <div class="flex items-center justify-between mb-6">
     <p class="text-sm text-gray-500">
         Tugas hari ini:
@@ -26,7 +25,6 @@
     </button>
 </div>
 
-{{-- Tabel --}}
 <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
     <table class="w-full text-sm">
         <thead>
@@ -34,7 +32,6 @@
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-48">Judul</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600">Deskripsi</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-48">Penerima</th>
-                <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-32">Dibuat Oleh</th>
                 <th class="text-right px-6 py-3.5 font-semibold text-gray-600 w-20">Aksi</th>
             </tr>
         </thead>
@@ -44,36 +41,33 @@
                     $hasCompleted = $task->assignments->where('is_completed', 1)->count() > 0;
                 @endphp
                 <tr class="hover:bg-gray-50 transition">
-
-                    {{-- Judul --}}
                     <td class="px-6 py-4 w-48">
                         <div class="truncate max-w-[170px] font-medium text-gray-800"
                              title="{{ $task->title }}">
                             {{ $task->title }}
                         </div>
                     </td>
-
-                    {{-- Deskripsi --}}
                     <td class="px-6 py-4">
                         <div class="truncate max-w-[220px] text-gray-500"
                              title="{{ $task->description ?? '-' }}">
                             {{ $task->description ?? '-' }}
                         </div>
                     </td>
-
-                    {{-- Penerima --}}
                     <td class="px-6 py-4 w-48">
                         <div class="flex flex-wrap gap-1">
                             @foreach($task->assignedUsers as $assignee)
                                 @php
                                     $assignment = $task->assignments->firstWhere('user_id', $assignee->id);
-                                    $done = $assignment?->is_completed;
+                                    $done       = $assignment?->is_completed;
                                 @endphp
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
-                                    {{ $done ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600' }}">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                                             text-xs font-medium
+                                             {{ $done ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600' }}">
                                     @if($done)
                                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                            <path fill-rule="evenodd"
+                                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                  clip-rule="evenodd"/>
                                         </svg>
                                     @endif
                                     {{ $assignee->name }}
@@ -81,16 +75,6 @@
                             @endforeach
                         </div>
                     </td>
-
-                    {{-- Dibuat Oleh --}}
-                    <td class="px-6 py-4 w-32">
-                        <div class="truncate max-w-[110px] text-gray-500"
-                             title="{{ $task->creator?->name ?? 'Sistem' }}">
-                            {{ $task->creator?->name ?? 'Sistem' }}
-                        </div>
-                    </td>
-
-                    {{-- Aksi --}}
                     <td class="px-6 py-4 w-20">
                         <div class="flex items-center justify-end gap-2 whitespace-nowrap">
                             @if(!$hasCompleted)
@@ -125,7 +109,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="px-6 py-12 text-center text-gray-400 text-sm">
+                    <td colspan="4" class="px-6 py-12 text-center text-gray-400 text-sm">
                         Belum ada tugas hari ini.
                     </td>
                 </tr>
@@ -185,14 +169,15 @@
                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                 @enderror
             </div>
-            <div class="flex justify-end gap-3 pt-2 flex-shrink-0">
+            <div class="flex justify-end gap-3 pt-2">
                 <button type="button"
                         onclick="document.getElementById('modal-create').classList.add('hidden')"
                         class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium">
                     Batal
                 </button>
                 <button type="submit"
-                        class="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition">
+                        class="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white
+                               text-sm font-medium rounded-lg transition">
                     Kirim Tugas
                 </button>
             </div>
@@ -249,14 +234,15 @@
                     @endforeach
                 </div>
             </div>
-            <div class="flex justify-end gap-3 pt-2 flex-shrink-0">
+            <div class="flex justify-end gap-3 pt-2">
                 <button type="button"
                         onclick="document.getElementById('modal-edit').classList.add('hidden')"
                         class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium">
                     Batal
                 </button>
                 <button type="submit"
-                        class="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition">
+                        class="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white
+                               text-sm font-medium rounded-lg transition">
                     Simpan Perubahan
                 </button>
             </div>
@@ -278,7 +264,6 @@
             <p class="text-sm text-gray-500 mb-6">
                 Yakin ingin menghapus
                 <span id="delete-task-title" class="font-semibold text-gray-700"></span>?
-                Tindakan ini tidak dapat dibatalkan.
             </p>
             <form id="form-delete" action="" method="POST">
                 @csrf
@@ -290,7 +275,8 @@
                         Batal
                     </button>
                     <button type="submit"
-                            class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition">
+                            class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white
+                                   text-sm font-medium rounded-lg transition">
                         Ya, Hapus
                     </button>
                 </div>
@@ -299,18 +285,14 @@
     </div>
 </div>
 
-{{-- ── JavaScript ──────────────────────────────────────── --}}
 <script>
     function openEditModal(id, title, description, currentUserIds) {
         document.getElementById('edit-title').value = title;
         document.getElementById('edit-description').value = description;
         document.getElementById('form-edit').action = `/admin/tasks/${id}`;
-
-        // Reset semua checkbox dulu
         document.querySelectorAll('.edit-user-checkbox').forEach(cb => {
             cb.checked = currentUserIds.includes(parseInt(cb.value));
         });
-
         document.getElementById('modal-edit').classList.remove('hidden');
     }
 

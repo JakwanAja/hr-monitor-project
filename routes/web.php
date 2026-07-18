@@ -22,10 +22,19 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // ── ADMIN ────────────────────────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
-    Route::resource('users', UserController::class) ->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('users', UserController::class)
+        ->only(['index', 'store', 'update', 'destroy']);
     Route::patch('/users/{user}/password', [UserController::class, 'updatePassword'])->name('users.password');
-    Route::resource('default-tasks', DefaultTaskController::class) ->only(['index', 'store', 'update', 'destroy']);
-    Route::resource('tasks', AdminTaskController::class) ->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('default-tasks', DefaultTaskController::class)
+        ->only(['index', 'store', 'update', 'destroy']);
+
+    // Task 
+    Route::resource('tasks', AdminTaskController::class)
+        ->only(['index', 'store', 'update', 'destroy']);
+    Route::get('/tasks/staff', [AdminTaskController::class, 'staffTasks'])->name('tasks.staff');
+    Route::get('/tasks/assistant', [AdminTaskController::class, 'assistantTasks'])->name('tasks.assistant');
+    Route::delete('/tasks/{task}/force', [AdminTaskController::class, 'forceDestroy'])->name('tasks.force-destroy');
+
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/productivity', [ReportController::class, 'productivity'])->name('productivity');
         Route::get('/history', [ReportController::class, 'history'])->name('history');

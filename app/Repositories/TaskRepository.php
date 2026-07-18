@@ -188,4 +188,51 @@ class TaskRepository
             ->orderByDesc('created_at')
             ->get();
     }
+
+    public function getTasksCreatedByAdmin(): Collection
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+
+        return $query
+            ->with(['creator:id,name', 'assignments', 'assignedUsers:id,name,role'])
+            ->whereHas('creator', function ($q) {
+                $q->where('role', 'admin');
+            })
+            ->where('type', 'assigned')
+            ->whereDate('task_date', Carbon::today())
+            ->orderByDesc('created_at')
+            ->get();
+    }
+    public function getTasksByStaff(): Collection
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+
+        return $query
+            ->with(['creator:id,name', 'assignments', 'assignedUsers:id,name,role'])
+            ->whereHas('creator', function ($q) {
+                $q->where('role', 'hr_staff');
+            })
+            ->whereDate('task_date', Carbon::today())
+            ->orderByDesc('created_at')
+            ->get();
+    }
+
+    public function getAllTasksForAssistant(): Collection
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+
+        return $query
+            ->with(['creator:id,name', 'assignments', 'assignedUsers:id,name,role'])
+            ->whereHas('assignments', function ($q) {
+                $q->whereHas('user', function ($q) {
+                    $q->where('role', 'hr_assistant');
+                });
+            })
+            ->whereDate('task_date', Carbon::today())
+            ->orderByDesc('created_at')
+            ->get();
+    }
 }

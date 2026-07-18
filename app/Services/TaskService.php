@@ -211,6 +211,18 @@ class TaskService
             ]);
         }
     }
+
+    public function forceDeleteTask(Task $task): bool
+    {
+        if ($this->taskRepository->hasAnyCompleted($task->id)) {
+            throw ValidationException::withMessages([
+                'task' => 'Tugas tidak dapat dihapus karena sudah ada penerima yang menyelesaikannya.',
+            ]);
+        }
+
+        return $this->taskRepository->delete($task);
+    }
+
     private function attachAssigneesAndNotify(Task $task, array $userIds): void
     {
         $assignerName = Auth::user()->name;
@@ -233,4 +245,20 @@ class TaskService
     {
         return $this->taskRepository->getHistoryForAdmin($userId, $date);
     }
+
+    public function getTasksByStaff(): Collection
+    {
+        return $this->taskRepository->getTasksByStaff();
+    }
+
+    public function getTasksCreatedByAdmin(): Collection
+    {
+        return $this->taskRepository->getTasksCreatedByAdmin();
+    }
+
+    public function getAllTasksForAssistant(): Collection
+    {
+        return $this->taskRepository->getAllTasksForAssistant();
+    }
+
 }
