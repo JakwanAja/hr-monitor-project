@@ -41,6 +41,17 @@ class DefaultTaskRepository
             ->get();
     }
 
+    public function getAllActive(): Collection
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+
+        return $query
+            ->with('creator:id,name')
+            ->where('is_active', 1)
+            ->get();
+    }
+
     public function create(array $data): DefaultTask
     {
         return $this->model->create($data);

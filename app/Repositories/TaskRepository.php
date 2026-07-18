@@ -235,4 +235,22 @@ class TaskRepository
             ->orderByDesc('created_at')
             ->get();
     }
+
+    public function isDefaultTaskAlreadyGenerated(int $defaultTaskId, string $date): bool
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+
+        return $query
+            ->where('default_task_id', $defaultTaskId)
+            ->whereDate('task_date', $date)
+            ->exists();
+    }
+    public function getUsersByRole(string $role): Collection
+    {
+        return \App\Models\User::query()
+            ->where('role', $role)
+            ->where('is_active', 1)
+            ->get();
+    }
 }
