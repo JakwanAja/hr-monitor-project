@@ -70,12 +70,12 @@ class TaskController extends Controller
     }
 
    // ── Self Task (Tugas Mandiri) ────────────────────────
-    public function index()
-    {
-        $tasks = $this->taskService->getAllTasksForUserToday(Auth::id());
-        return view('staff.tasks.index', compact('tasks'));
-    }
-
+   public function index()
+   {
+       $tasks = $this->taskService->getSelfTasksToday(Auth::id());
+       return view('staff.tasks.index', compact('tasks'));
+   }
+   
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -137,6 +137,48 @@ class TaskController extends Controller
         $tasks = $this->taskService->getHistoryForUser(Auth::id(), $date);
         return view('staff.history.index', compact('tasks', 'date'));
     }
-        
+
+    public function dailyIndex()
+    {
+        $tasks = $this->taskService->getDefaultTasksForUser(Auth::id());
+        return view('staff.tasks.daily', compact('tasks'));
+    }
+
+    public function dailyComplete(Request $request, Task $task)
+    {
+        $request->validate([
+            'note' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        try {
+            $this->taskService->completeTask($task, $request->note);
+            return redirect()->route('staff.tasks.daily')
+                ->with('success', 'Tugas berhasil ditandai selesai.');
+        } catch (ValidationException $e) {
+            return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
+        }
+    }
+
+    public function assignedIndex()
+    {
+        $tasks = $this->taskService->getAssignedTasksFromAdmin(Auth::id());
+        return view('staff.tasks.assigned', compact('tasks'));
+    }
+
+    public function assignedComplete(Request $request, Task $task)
+    {
+        $request->validate([
+            'note' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        try {
+            $this->taskService->completeTask($task, $request->note);
+            return redirect()->route('staff.tasks.assigned')
+                ->with('success', 'Tugas berhasil ditandai selesai.');
+        } catch (ValidationException $e) {
+            return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
+        }
+    }
+            
     public function assistantProgress() { return 'Coming soon...'; }
 }

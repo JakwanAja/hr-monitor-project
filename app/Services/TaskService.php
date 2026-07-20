@@ -261,4 +261,34 @@ class TaskService
         return $this->taskRepository->getAllTasksForAssistant();
     }
 
+    public function getDailyStats(): array
+    {
+        return $this->taskRepository->getDailyStats();
+    }
+
+    public function getDailyStatsPerUser(): Collection
+    {
+        return $this->taskRepository->getDailyStatsPerUser();
+    }
+
+    public function getUserScore(int $userId, string $period): int
+    {
+        return $this->taskRepository->getUserScore($userId, $period);
+    }
+
+    public function getAssistantProgressForStaff(): Collection
+    {
+        return $this->taskRepository->getDailyStatsPerUser()
+            ->where('role', 'hr_assistant');
+    }
+
+    public function getDefaultTasksForUser(int $userId): Collection
+    {
+        return $this->taskRepository->getDefaultTasksForUser($userId);
+    }
+
+    public function getAssignedTasksFromAdmin(int $userId): Collection
+    {
+        return $this->taskRepository->getAssignedTasksFromAdmin($userId);
+    }
 }

@@ -47,8 +47,12 @@ Route::prefix('staff')->name('staff.')->middleware(['auth', 'role:hr_staff'])->g
     Route::get('/dashboard', [StaffDashboard::class, 'index'])->name('dashboard');
     Route::resource('tasks', StaffTaskController::class) ->only(['index', 'store', 'update', 'destroy']);
     Route::patch('/tasks/{task}/complete', [StaffTaskController::class, 'complete'])->name('tasks.complete');
+    Route::get('/tasks/daily', [StaffTaskController::class, 'dailyIndex'])->name('tasks.daily');
+    Route::patch('/tasks/daily/{task}/complete', [StaffTaskController::class, 'dailyComplete'])->name('tasks.daily.complete');
+    Route::get('/tasks/assigned', [StaffTaskController::class, 'assignedIndex'])->name('tasks.assigned');
+    Route::patch('/tasks/assigned/{task}/complete', [StaffTaskController::class, 'assignedComplete'])->name('tasks.assigned.complete');
     Route::get('/history', [StaffTaskController::class, 'history'])->name('tasks.history');
-    Route::get('/assign-tasks', [StaffTaskController::class, 'assignIndex'])->name('assign.index');    
+    Route::get('/assign-tasks', [StaffTaskController::class, 'assignIndex'])->name('assign.index');
     Route::post('/assign-tasks', [StaffTaskController::class, 'assignStore'])->name('assign.store');
     Route::patch('/assign-tasks/{task}', [StaffTaskController::class, 'assignUpdate'])->name('assign.update');
     Route::delete('/assign-tasks/{task}', [StaffTaskController::class, 'assignDestroy'])->name('assign.destroy');

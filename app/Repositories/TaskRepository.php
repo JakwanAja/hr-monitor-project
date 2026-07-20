@@ -38,7 +38,7 @@ class TaskRepository
             ->get();
     }
 
-    public function findById(int $id): ?Task
+   public function findById(int $id): ?Task
     {
         /** @var Builder $query */
         $query = $this->model->newQuery();
@@ -143,24 +143,24 @@ class TaskRepository
     }
 
     public function getHistoryForUser(int $userId, ?string $date = null): Collection
-{
-    /** @var Builder $query */
-    $query = $this->model->newQuery();
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
 
-    return $query
-        ->with(['assignments' => function ($q) use ($userId) {
-            $q->where('user_id', $userId);
-        }, 'creator:id,name'])
-        ->whereHas('assignments', function ($q) use ($userId) {
-            $q->where('user_id', $userId);
-        })
-        ->when($date, function ($q) use ($date) {
-            $q->whereDate('task_date', $date);
-        })
-        ->orderByDesc('task_date')
-        ->orderByDesc('created_at')
-        ->get();
-}
+        return $query
+            ->with(['assignments' => function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            }, 'creator:id,name'])
+            ->whereHas('assignments', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->when($date, function ($q) use ($date) {
+                $q->whereDate('task_date', $date);
+            })
+            ->orderByDesc('task_date')
+            ->orderByDesc('created_at')
+            ->get();
+    }
     public function getHistoryForAdmin(?int $userId = null, ?string $date = null): Collection
     {
         /** @var Builder $query */
@@ -251,6 +251,113 @@ class TaskRepository
         return \App\Models\User::query()
             ->where('role', $role)
             ->where('is_active', 1)
+            ->get();
+    }
+
+    public function getDailyStats(): array
+    {
+        /** @var Builder $query */
+        $query = TaskAssignment::query();
+
+        $total    = $query->whereHas('task', function ($q) {
+            $q->whereDate('task_date', Carbon::today());
+        })->count();
+
+        $completed = TaskAssignment::query()
+            ->whereHas('task', function ($q) {
+                $q->whereDate('task_date', Carbon::today());
+            })
+            ->where('is_completed', 1)
+            ->count();
+
+        return [
+            'total'     => $total,
+            'completed' => $completed,
+            'pending'   => $total - $completed,
+        ];
+    }
+
+    public function getDailyStatsPerUser(): Collection
+    {
+        return \App\Models\User::query()
+            ->whereIn('role', ['hr_staff', 'hr_assistant'])
+            ->where('is_active', 1)
+            ->withCount([
+                'taskAssignments as total_tasks' => function ($q) {
+                    $q->whereHas('task', function ($q) {
+                        $q->whereDate('task_date', Carbon::today());
+                    });
+                },
+                'taskAssignments as completed_tasks' => function ($q) {
+                    $q->whereHas('task', function ($q) {
+                        $q->whereDate('task_date', Carbon::today());
+                    })->where('is_completed', 1);
+                },
+            ])
+            ->orderBy('role')
+            ->orderBy('name')
+            ->get();
+    }
+
+    public function getUserScore(int $userId, string $period): int
+    {
+        /** @var Builder $query */
+        $query = TaskAssignment::query();
+
+        $query->where('user_id', $userId)
+            ->where('is_completed', 1);
+
+        if ($period === 'week') {
+            $query->whereHas('task', function ($q) {
+                $q->whereBetween('task_date', [
+                    Carbon::now()->startOfWeek(),
+                    Carbon::now()->endOfWeek(),
+                ]);
+            });
+        } elseif ($period === 'month') {
+            $query->whereHas('task', function ($q) {
+                $q->whereMonth('task_date', Carbon::now()->month)
+                ->whereYear('task_date', Carbon::now()->year);
+            });
+        }
+        return $query->count();
+    }
+    public function getDefaultTasksForUser(int $userId): Collection
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+    
+        return $query
+            ->with(['assignments' => function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            }])
+            ->whereHas('assignments', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->where('type', 'default')
+            ->whereDate('task_date', Carbon::today())
+            ->orderByDesc('created_at')
+            ->get();
+    }
+    
+    public function getAssignedTasksFromAdmin(int $userId): Collection
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+    
+        return $query
+            ->with(['assignments' => function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            }, 'creator:id,name'])
+            ->whereHas('assignments', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->whereHas('creator', function ($q) {
+                $q->where('role', 'admin');
+            })
+            ->where('type', 'assigned')
+            ->whereDate('task_date', Carbon::today())
+            ->orderByDesc('created_at')
             ->get();
     }
 }
