@@ -291,4 +291,14 @@ class TaskService
     {
         return $this->taskRepository->getAssignedTasksFromAdmin($userId);
     }
+
+    public function getDefaultTasksForAssistant(int $userId): Collection
+    {
+        return $this->taskRepository->getDefaultTasksForAssistant($userId);
+    }
+    
+    public function getAllAssignedTasksForAssistant(int $userId): Collection
+    {
+        return $this->taskRepository->getAllAssignedTasksForAssistant($userId);
+    }
 }

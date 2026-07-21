@@ -15,37 +15,60 @@ class TaskController extends Controller
         protected TaskService $taskService
     ) {}
 
+    // ── Tugas Rutin ──────────────────────────────────────
+
+    public function routineIndex()
+    {
+        $tasks = $this->taskService->getDefaultTasksForAssistant(Auth::id());
+        return view('assistant.tasks.routine', compact('tasks'));
+    }
+
+    public function routineComplete(Request $request, Task $task)
+    {
+        $request->validate([
+            'note' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        try {
+            $this->taskService->completeTask($task, $request->note);
+            return redirect()->route('assistant.tasks.routine')
+                ->with('success', 'Tugas berhasil ditandai selesai.');
+        } catch (ValidationException $e) {
+            return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
+        }
+    }
+
+    // ── Tugas dari Admin & Staff (digabung) ──────────────
+
+    public function assignedIndex()
+    {
+        $tasks = $this->taskService->getAllAssignedTasksForAssistant(Auth::id());
+        return view('assistant.tasks.assigned', compact('tasks'));
+    }
+
+    public function assignedComplete(Request $request, Task $task)
+    {
+        $request->validate([
+            'note' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        try {
+            $this->taskService->completeTask($task, $request->note);
+            return redirect()->route('assistant.tasks.assigned')
+                ->with('success', 'Tugas berhasil ditandai selesai.');
+        } catch (ValidationException $e) {
+            return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
+        }
+    }
+
+    // ── Tugas Mandiri ────────────────────────────────────
+
     public function index()
     {
-        $tasks = $this->taskService->getAllTasksForUserToday(Auth::id());
+        $tasks = $this->taskService->getSelfTasksToday(Auth::id());
         return view('assistant.tasks.index', compact('tasks'));
     }
-    public function update(Request $request, Task $task)
-    {
-        $validated = $request->validate([
-            'title'       => ['required', 'string', 'max:200'],
-            'description' => ['nullable', 'string'],
-        ]);
-    
-        try {
-            $this->taskService->updateSelfTask($task, $validated);
-            return redirect()->route('assistant.tasks.index')
-                ->with('success', 'Tugas mandiri berhasil diperbarui.');
-        } catch (ValidationException $e) {
-            return back()->with('error', $e->errors()['task'][0] ?? 'Gagal memperbarui tugas.');
-        }
-    }
-    
-    public function destroy(Task $task)
-    {
-        try {
-            $this->taskService->deleteSelfTask($task);
-            return redirect()->route('assistant.tasks.index')
-                ->with('success', 'Tugas mandiri berhasil dihapus.');
-        } catch (ValidationException $e) {
-            return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menghapus tugas.');
-        }
-    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -62,11 +85,31 @@ class TaskController extends Controller
         }
     }
 
-    public function history(Request $request)
+    public function update(Request $request, Task $task)
     {
-        $date  = $request->query('date');
-        $tasks = $this->taskService->getHistoryForUser(Auth::id(), $date);
-        return view('assistant.history.index', compact('tasks', 'date'));
+        $validated = $request->validate([
+            'title'       => ['required', 'string', 'max:200'],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        try {
+            $this->taskService->updateSelfTask($task, $validated);
+            return redirect()->route('assistant.tasks.index')
+                ->with('success', 'Tugas mandiri berhasil diperbarui.');
+        } catch (ValidationException $e) {
+            return back()->with('error', $e->errors()['task'][0] ?? 'Gagal memperbarui tugas.');
+        }
+    }
+
+    public function destroy(Task $task)
+    {
+        try {
+            $this->taskService->deleteSelfTask($task);
+            return redirect()->route('assistant.tasks.index')
+                ->with('success', 'Tugas mandiri berhasil dihapus.');
+        } catch (ValidationException $e) {
+            return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menghapus tugas.');
+        }
     }
 
     public function complete(Request $request, Task $task)
@@ -74,7 +117,7 @@ class TaskController extends Controller
         $request->validate([
             'note' => ['nullable', 'string', 'max:500'],
         ]);
-    
+
         try {
             $this->taskService->completeTask($task, $request->note);
             return redirect()->route('assistant.tasks.index')
@@ -84,4 +127,10 @@ class TaskController extends Controller
         }
     }
 
+    public function history(Request $request)
+    {
+        $date  = $request->query('date');
+        $tasks = $this->taskService->getHistoryForUser(Auth::id(), $date);
+        return view('assistant.history.index', compact('tasks', 'date'));
+    }
 }

@@ -360,4 +360,40 @@ class TaskRepository
             ->orderByDesc('created_at')
             ->get();
     }
+
+    public function getDefaultTasksForAssistant(int $userId): Collection
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+    
+        return $query
+            ->with(['assignments' => function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            }])
+            ->whereHas('assignments', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->where('type', 'default')
+            ->whereDate('task_date', Carbon::today())
+            ->orderByDesc('created_at')
+            ->get();
+    }
+    
+    public function getAllAssignedTasksForAssistant(int $userId): Collection
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+    
+        return $query
+            ->with(['assignments' => function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            }, 'creator:id,name,role'])
+            ->whereHas('assignments', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->where('type', 'assigned')
+            ->whereDate('task_date', Carbon::today())
+            ->orderByDesc('created_at')
+            ->get();
+    }
 }

@@ -75,7 +75,7 @@ class TaskController extends Controller
        $tasks = $this->taskService->getSelfTasksToday(Auth::id());
        return view('staff.tasks.index', compact('tasks'));
    }
-   
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -122,7 +122,7 @@ class TaskController extends Controller
         $request->validate([
             'note' => ['nullable', 'string', 'max:500'],
         ]);
-    
+        
         try {
             $this->taskService->completeTask($task, $request->note);
             return redirect()->route('staff.tasks.index')

@@ -62,10 +62,14 @@ Route::prefix('staff')->name('staff.')->middleware(['auth', 'role:hr_staff'])->g
 // ── HR Assistant ─────────────────────────────────────────────────────────────
 Route::prefix('assistant')->name('assistant.')->middleware(['auth', 'role:hr_assistant'])->group(function () {
     Route::get('/dashboard', [AssistantDashboard::class, 'index'])->name('dashboard');
+    Route::get('/tasks/routine', [AssistantTaskController::class, 'routineIndex'])->name('tasks.routine');
+    Route::patch('/tasks/routine/{task}/complete', [AssistantTaskController::class, 'routineComplete'])->name('tasks.routine.complete');
+    Route::get('/tasks/assigned', [AssistantTaskController::class, 'assignedIndex'])->name('tasks.assigned');
+    Route::patch('/tasks/assigned/{task}/complete', [AssistantTaskController::class, 'assignedComplete'])->name('tasks.assigned.complete');
     Route::resource('tasks', AssistantTaskController::class) ->only(['index', 'store']);
-    Route::patch('/tasks/{task}/complete', [AssistantTaskController::class, 'complete'])->name('tasks.complete');
-    Route::delete('/tasks/{task}', [AssistantTaskController::class, 'destroy'])->name('tasks.destroy');
     Route::patch('/tasks/{task}', [AssistantTaskController::class, 'update'])->name('tasks.update');
+    Route::delete('/tasks/{task}', [AssistantTaskController::class, 'destroy'])->name('tasks.destroy');
+    Route::patch('/tasks/{task}/complete', [AssistantTaskController::class, 'complete'])->name('tasks.complete');
     Route::get('/history', [AssistantTaskController::class, 'history'])->name('tasks.history');
 });
 

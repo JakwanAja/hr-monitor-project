@@ -9,18 +9,63 @@
     Dashboard
 </a>
 
-{{-- Tugas Hari Ini --}}
-<a href="{{ route('assistant.tasks.index') }}"
-   class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all
-          {{ request()->routeIs('assistant.tasks.index') ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
-    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-    </svg>
-    Tugas Hari Ini
-</a>        
+{{-- Tugas Hari Ini (collapsible) --}}
+@php
+    $taskActive = request()->routeIs('assistant.tasks.*');
+@endphp
+<div x-data="{ open: {{ $taskActive ? 'true' : 'false' }} }">
+    <button @click="open = !open"
+            class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all
+                   {{ $taskActive ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+        </svg>
+        <span class="flex-1 text-left">Tugas Hari Ini</span>
+        <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''"
+             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+    </button>
 
-{{-- Riwayat --}}
+    <div x-show="open" x-transition class="mt-1 ml-4 pl-4 border-l border-white/10 space-y-1">
+
+        {{-- Tugas Rutin --}}
+        <a href="{{ route('assistant.tasks.routine') }}"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all
+                  {{ request()->routeIs('assistant.tasks.routine') ? 'text-white bg-white/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            Tugas Rutin
+        </a>
+
+        {{-- Tugas dari Admin & Staff --}}
+        <a href="{{ route('assistant.tasks.assigned') }}"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all
+                  {{ request()->routeIs('assistant.tasks.assigned') ? 'text-white bg-white/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Tugas dari Atasan
+        </a>
+
+        {{-- Tugas Mandiri --}}
+        <a href="{{ route('assistant.tasks.index') }}"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all
+                  {{ request()->routeIs('assistant.tasks.index') ? 'text-white bg-white/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            Tugas Mandiri
+        </a>
+    </div>
+</div>
+
+{{-- Riwayat Tugas --}}
 <a href="{{ route('assistant.tasks.history') }}"
    class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all
           {{ request()->routeIs('assistant.tasks.history') ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
