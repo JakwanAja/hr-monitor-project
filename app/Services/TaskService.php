@@ -249,6 +249,21 @@ class TaskService
             }
         }
     }
+
+    public function getTopRankings(string $period = 'week'): \Illuminate\Support\Collection
+    {
+        $users = app(\App\Repositories\UserRepository::class)->getAllExceptAdmin();
+
+        return $users->map(function ($user) use ($period) {
+            return [
+                'user'  => $user,
+                'score' => $this->taskRepository->getUserScore($user->id, $period),
+            ];
+        })
+        ->sortByDesc('score')
+        ->take(3)
+        ->values();
+    }
     public function getHistoryForUser(int $userId, ?string $date = null): Collection
     {
         return $this->taskRepository->getHistoryForUser($userId, $date);
@@ -313,5 +328,10 @@ class TaskService
     public function getAllAssignedTasksForAssistant(int $userId): Collection
     {
         return $this->taskRepository->getAllAssignedTasksForAssistant($userId);
+    }
+
+    public function getDailyStatsForAssistants(): Collection
+    {
+        return $this->taskRepository->getDailyStatsForAssistants();
     }
 }

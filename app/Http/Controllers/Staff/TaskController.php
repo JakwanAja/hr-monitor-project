@@ -180,5 +180,17 @@ class TaskController extends Controller
         }
     }
             
-    public function assistantProgress() { return 'Coming soon...'; }
+    public function assistantProgress()
+    {
+        $assistants = $this->taskService->getDailyStatsForAssistants();
+        $scoreData  = [];
+
+        foreach ($assistants as $assistant) {
+            $scoreData[$assistant->id] = [
+                'week'  => $this->taskService->getUserScore($assistant->id, 'week'),
+                'month' => $this->taskService->getUserScore($assistant->id, 'month'),
+            ];
+        }
+        return view('staff.assistant-progress', compact('assistants', 'scoreData'));
+    }
 }

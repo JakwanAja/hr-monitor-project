@@ -15,7 +15,8 @@ class DashboardController extends Controller
     {
         $stats    = $this->taskService->getDailyStats();
         $perUser  = $this->taskService->getDailyStatsPerUser();
+        $rankings = $this->taskService->getTopRankings('week');
 
-        return view('admin.dashboard', compact('stats', 'perUser'));
+        return view('admin.dashboard', compact('stats', 'perUser', 'rankings'));
     }
 }

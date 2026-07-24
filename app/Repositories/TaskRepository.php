@@ -423,4 +423,30 @@ class TaskRepository
             ->orderByDesc('created_at')
             ->get();
     }
+
+    public function getDailyStatsForAssistants(): Collection
+    {
+        return \App\Models\User::query()
+            ->where('role', 'hr_assistant')
+            ->where('is_active', 1)
+            ->withCount([
+                'taskAssignments as total_tasks' => function ($q) {
+                    $q->whereHas('task', function ($q) {
+                        $q->whereDate('task_date', Carbon::today());
+                    });
+                },
+                'taskAssignments as completed_tasks' => function ($q) {
+                    $q->whereHas('task', function ($q) {
+                        $q->whereDate('task_date', Carbon::today());
+                    })->where('is_completed', 'completed');
+                },
+                'taskAssignments as not_done_tasks' => function ($q) {
+                    $q->whereHas('task', function ($q) {
+                        $q->whereDate('task_date', Carbon::today());
+                    })->where('is_completed', 'not_done');
+                },
+            ])
+            ->orderBy('name')
+            ->get();
+    }
 }

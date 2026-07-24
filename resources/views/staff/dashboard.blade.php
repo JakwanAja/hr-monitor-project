@@ -58,7 +58,7 @@
             <p class="text-xs text-gray-400 mt-1">masih dalam pengerjaan</p>
         </div>
 
-        {{-- Tidak Dikerjakan --}}
+        {{-- Tidak Dikerjakan 
         <div class="bg-white rounded-xl border border-gray-200 p-5">
             <div class="flex items-center justify-between mb-3">
                 <p class="text-sm font-medium text-gray-500">Tidak Dikerjakan</p>
@@ -71,7 +71,7 @@
             </div>
             <p class="text-3xl font-bold text-red-600">{{ $stats['not_done'] }}</p>
             <p class="text-xs text-gray-400 mt-1">melewati batas waktu</p>
-        </div>
+        </div>--}}
 
         {{-- Skor Minggu Ini --}}
         <div class="bg-white rounded-xl border border-gray-200 p-5">
