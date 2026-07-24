@@ -67,6 +67,7 @@
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-28">Sumber</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600">Catatan</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-28">Status</th>
+                <th class="text-right px-6 py-3.5 font-semibold text-gray-600 w-16">Detail</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
@@ -119,15 +120,45 @@
                             </div>
                         </td>
 
-                        {{-- Status --}}
+                       {{-- Status --}}
                         <td class="px-6 py-4 w-28">
                             <x-task-status-badge :status="$assignment?->is_completed ?? 'pending'" />
                         </td>
+
+                        {{-- Detail --}}
+                        <td class="px-6 py-4 w-16">
+                            <div class="flex justify-end">
+                                <button
+                                    onclick="openDetailModal({
+                                        title: '{{ addslashes($task->title) }}',
+                                        description: '{{ addslashes($task->description ?? '') }}',
+                                        type: '{{ $task->type }}',
+                                        date: '{{ $task->task_date->translatedFormat('d M Y') }}',
+                                        source: '{{ addslashes($task->creator?->name ?? 'Sistem') }}',
+                                        status: '{{ $assignment?->is_completed ?? 'pending' }}',
+                                        note: '{{ addslashes($assignment?->note ?? '') }}',
+                                        assignees: {{ json_encode($task->assignedUsers->map(fn($u) => [
+                                            'name'   => $u->name,
+                                            'role'   => $u->role === 'hr_staff' ? 'HR Staff' : 'HR Assistant',
+                                            'status' => $task->assignments->firstWhere('user_id', $u->id)?->is_completed ?? 'pending',
+                                        ])) }}
+                                    })"
+                                    class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
+                                    title="Lihat Detail">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
                     </tr>
                 @endforeach
-            @empty
+            @empty  
                 <tr>
-                    <td colspan="6" class="px-6 py-12 text-center text-gray-400 text-sm">
+                    <td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">
                         {{ $date || $userId ? 'Tidak ada data sesuai filter.' : 'Belum ada riwayat tugas.' }}
                     </td>
                 </tr>

@@ -34,7 +34,7 @@ class DashboardController extends Controller
         $scoreMonth = $this->taskService->getUserScore($userId, 'month');
         $assistants = $this->taskService->getAssistantProgressForStaff();
 
-        return view('staff.dashboard', compact(
+        return view('assistant.dashboard', compact(
             'tasks', 'stats', 'scoreWeek', 'scoreMonth', 'assistants'
         ));
     }

@@ -140,6 +140,7 @@
         </main>
 
     </div>
+    @include('components.task-detail-modal')
 </div>
 </body>
 </html>
