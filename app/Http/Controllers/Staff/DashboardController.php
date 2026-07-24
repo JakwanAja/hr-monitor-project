@@ -19,8 +19,15 @@ class DashboardController extends Controller
 
         $stats = [
             'total'     => $tasks->count(),
-            'completed' => $tasks->filter(fn($t) => $t->assignments->first()?->is_completed)->count(),
-            'pending'   => $tasks->filter(fn($t) => !$t->assignments->first()?->is_completed)->count(),
+            'completed' => $tasks->filter(fn($t) =>
+                $t->assignments->first()?->is_completed === 'completed'
+            )->count(),
+            'pending'   => $tasks->filter(fn($t) =>
+                $t->assignments->first()?->is_completed === 'pending'
+            )->count(),
+            'not_done'  => $tasks->filter(fn($t) =>
+                $t->assignments->first()?->is_completed === 'not_done'
+            )->count(),
         ];
 
         $scoreWeek  = $this->taskService->getUserScore($userId, 'week');

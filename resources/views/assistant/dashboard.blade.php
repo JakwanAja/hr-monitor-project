@@ -27,6 +27,7 @@
             <p class="text-xs text-gray-400 mt-1">tugas hari ini</p>
         </div>
 
+        {{-- Selesai --}}
         <div class="bg-white rounded-xl border border-gray-200 p-5">
             <div class="flex items-center justify-between mb-3">
                 <p class="text-sm font-medium text-gray-500">Selesai</p>
@@ -38,6 +39,36 @@
             </div>
             <p class="text-3xl font-bold text-green-600">{{ $stats['completed'] }}</p>
             <p class="text-xs text-gray-400 mt-1">sudah diselesaikan</p>
+        </div>
+
+        {{-- Belum Selesai --}}
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+            <div class="flex items-center justify-between mb-3">
+                <p class="text-sm font-medium text-gray-500">Belum Selesai</p>
+                <div class="w-9 h-9 rounded-lg bg-yellow-50 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold text-yellow-600">{{ $stats['pending'] }}</p>
+            <p class="text-xs text-gray-400 mt-1">masih dalam pengerjaan</p>
+        </div>
+
+        {{-- Tidak Dikerjakan --}}
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+            <div class="flex items-center justify-between mb-3">
+                <p class="text-sm font-medium text-gray-500">Tidak Dikerjakan</p>
+                <div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold text-red-600">{{ $stats['not_done'] }}</p>
+            <p class="text-xs text-gray-400 mt-1">melewati batas waktu</p>
         </div>
 
         <div class="bg-white rounded-xl border border-gray-200 p-5">

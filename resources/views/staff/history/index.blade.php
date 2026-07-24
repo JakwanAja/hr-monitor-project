@@ -49,7 +49,6 @@
             @forelse($tasks as $task)
                 @php
                     $assignment = $task->assignments->first();
-                    $isDone     = $assignment?->is_completed;
                 @endphp
                 <tr class="hover:bg-gray-50 transition">
 
@@ -97,22 +96,7 @@
 
                     {{-- Status --}}
                     <td class="px-6 py-4 w-28">
-                        @if($isDone)
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full
-                                         text-xs font-medium bg-green-50 text-green-700">
-                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clip-rule="evenodd"/>
-                                </svg>
-                                Selesai
-                            </span>
-                        @else
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full
-                                         text-xs font-medium bg-yellow-50 text-yellow-700">
-                                Belum Selesai
-                            </span>
-                        @endif
+                        <x-task-status-badge :status="$assignment?->is_completed ?? 'pending'" />
                     </td>
                 </tr>
             @empty

@@ -15,17 +15,32 @@ class TaskAssignment extends Model
         'completed_at',
         'note',
     ];
+
     protected function casts(): array
     {
         return [
-            'is_completed' => 'boolean',
             'completed_at' => 'datetime',
-            'note'         => 'string',
+            'is_completed' => 'string',
         ];
     }
-    
-    // ── Relasi ──────────────────────────────────────────
 
+    // ── Helper Status ────────────────────────────────────
+    public function isPending(): bool
+    {
+        return $this->is_completed === 'pending';
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->is_completed === 'completed';
+    }
+
+    public function isNotDone(): bool
+    {
+        return $this->is_completed === 'not_done';
+    }
+
+    // ── Relasi ──────────────────────────────────────────
     public function task()
     {
         return $this->belongsTo(Task::class, 'task_id');

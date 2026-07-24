@@ -38,35 +38,49 @@
         <tbody class="divide-y divide-gray-100">
             @forelse($tasks as $task)
                 @php
-                    $hasCompleted = $task->assignments->where('is_completed', 1)->count() > 0;
+                    $hasCompleted = $task->assignments->where('is_completed', 'completed')->count() > 0;
+                    $hasNotDone   = $task->assignments->where('is_completed', 'not_done')->count() > 0;
                 @endphp
                 <tr class="hover:bg-gray-50 transition">
+
+                    {{-- Judul --}}
                     <td class="px-6 py-4 w-48">
                         <div class="truncate max-w-[170px] font-medium text-gray-800"
                              title="{{ $task->title }}">
                             {{ $task->title }}
                         </div>
                     </td>
+
+                    {{-- Deskripsi --}}
                     <td class="px-6 py-4">
                         <div class="truncate max-w-[220px] text-gray-500"
                              title="{{ $task->description ?? '-' }}">
                             {{ $task->description ?? '-' }}
                         </div>
                     </td>
+
+                    {{-- Penerima --}}
                     <td class="px-6 py-4 w-48">
                         <div class="flex flex-wrap gap-1">
                             @foreach($task->assignedUsers as $assignee)
                                 @php
                                     $assignment = $task->assignments->firstWhere('user_id', $assignee->id);
-                                    $done       = $assignment?->is_completed;
+                                    $done       = $assignment?->is_completed === 'completed';
+                                    $notDone    = $assignment?->is_completed === 'not_done';
                                 @endphp
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
                                              text-xs font-medium
-                                             {{ $done ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600' }}">
+                                             {{ $done ? 'bg-green-50 text-green-700' : ($notDone ? 'bg-red-50 text-red-700' : 'bg-gray-100 text-gray-600') }}">
                                     @if($done)
                                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd"
                                                   d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                  clip-rule="evenodd"/>
+                                        </svg>
+                                    @elseif($notDone)
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
                                                   clip-rule="evenodd"/>
                                         </svg>
                                     @endif
@@ -75,9 +89,11 @@
                             @endforeach
                         </div>
                     </td>
+
+                    {{-- Aksi --}}
                     <td class="px-6 py-4 w-20">
                         <div class="flex items-center justify-end gap-2 whitespace-nowrap">
-                            @if(!$hasCompleted)
+                            @if(!$hasCompleted && !$hasNotDone)
                                 <button
                                     onclick="openEditModal(
                                         {{ $task->id }},
@@ -101,8 +117,10 @@
                                               d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                     </svg>
                                 </button>
-                            @else
+                            @elseif($hasCompleted)
                                 <span class="text-xs text-gray-400 italic">Terkunci</span>
+                            @else
+                                <span class="text-xs text-red-400 italic">Tidak Dikerjakan</span>
                             @endif
                         </div>
                     </td>

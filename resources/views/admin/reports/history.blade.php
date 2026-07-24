@@ -74,80 +74,54 @@
                 @foreach($task->assignedUsers as $assignee)
                     @php
                         $assignment = $task->assignments->firstWhere('user_id', $assignee->id);
-                        $isDone     = $assignment?->is_completed;
                     @endphp
                     <tr class="hover:bg-gray-50 transition">
-
-                        {{-- Tanggal --}}
                         <td class="px-6 py-4 text-gray-500 text-xs">
                             {{ $task->task_date->translatedFormat('d M Y') }}
                         </td>
-
-                        {{-- Judul --}}
                         <td class="px-6 py-4 w-44">
                             <div class="truncate max-w-[160px] font-medium text-gray-800"
-                                 title="{{ $task->title }}">
+                                title="{{ $task->title }}">
                                 {{ $task->title }}
                             </div>
                         </td>
-
-                        {{-- Penerima --}}
                         <td class="px-6 py-4 w-36">
                             <div class="truncate max-w-[120px] text-gray-700 text-xs font-medium"
-                                 title="{{ $assignee->name }}">
+                                title="{{ $assignee->name }}">
                                 {{ $assignee->name }}
                             </div>
                             <p class="text-xs text-gray-400">
                                 {{ $assignee->role === 'hr_staff' ? 'HR Staff' : 'HR Assistant' }}
                             </p>
                         </td>
-
-                        {{-- Sumber --}}
                         <td class="px-6 py-4 w-28">
                             @if($task->type === 'self')
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full
-                                             text-xs font-medium bg-gray-100 text-gray-600">
+                                            text-xs font-medium bg-gray-100 text-gray-600">
                                     Mandiri
                                 </span>
                             @elseif($task->type === 'assigned')
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full
-                                             text-xs font-medium bg-blue-50 text-blue-700">
+                                            text-xs font-medium bg-blue-50 text-blue-700">
                                     {{ $task->creator?->name ?? 'Admin' }}
                                 </span>
                             @elseif($task->type === 'default')
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full
-                                             text-xs font-medium bg-purple-50 text-purple-700">
+                                            text-xs font-medium bg-purple-50 text-purple-700">
                                     Rutin
                                 </span>
                             @endif
                         </td>
-
-                        {{-- Catatan --}}
                         <td class="px-6 py-4">
                             <div class="truncate max-w-[180px] text-gray-500 text-xs"
-                                 title="{{ $assignment?->note ?? '-' }}">
+                                title="{{ $assignment?->note ?? '-' }}">
                                 {{ $assignment?->note ?? '-' }}
                             </div>
                         </td>
 
                         {{-- Status --}}
                         <td class="px-6 py-4 w-28">
-                            @if($isDone)
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full
-                                             text-xs font-medium bg-green-50 text-green-700">
-                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                              clip-rule="evenodd"/>
-                                    </svg>
-                                    Selesai
-                                </span>
-                            @else
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full
-                                             text-xs font-medium bg-yellow-50 text-yellow-700">
-                                    Belum Selesai
-                                </span>
-                            @endif
+                            <x-task-status-badge :status="$assignment?->is_completed ?? 'pending'" />
                         </td>
                     </tr>
                 @endforeach

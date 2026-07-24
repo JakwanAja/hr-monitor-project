@@ -67,7 +67,7 @@ class TaskRepository
         return TaskAssignment::create([
             'task_id'      => $taskId,
             'user_id'      => $userId,
-            'is_completed' => 0,
+            'is_completed' => 'pending', 
         ]);
     }
 
@@ -77,16 +77,29 @@ class TaskRepository
         $query = TaskAssignment::query();
         $query->where('task_id', $taskId)->delete();
     }
-
     public function hasAnyCompleted(int $taskId): bool
     {
         /** @var Builder $query */
         $query = TaskAssignment::query();
-
+    
         return $query
             ->where('task_id', $taskId)
-            ->where('is_completed', 1)
+            ->where('is_completed', 'completed')
             ->exists();
+    }
+
+    public function markAllPendingAsNotDone(string $today): int
+    {
+        /** @var Builder $query */
+        $query = TaskAssignment::query();
+    
+        return $query
+            ->whereHas('task', function ($q) use ($today) {
+                // Semua task sebelum hari ini yang masih pending
+                $q->whereDate('task_date', '<', $today);
+            })
+            ->where('is_completed', 'pending')
+            ->update(['is_completed' => 'not_done']);
     }
 
     public function getSelfTasksToday(int $userId): Collection
@@ -119,7 +132,7 @@ class TaskRepository
     public function completeAssignment(TaskAssignment $assignment, ?string $note): bool
     {
         return (bool) $assignment->update([
-            'is_completed' => 1,
+            'is_completed' => 'completed',
             'completed_at' => now(),
             'note'         => $note,
         ]);
@@ -258,22 +271,30 @@ class TaskRepository
     {
         /** @var Builder $query */
         $query = TaskAssignment::query();
-
-        $total    = $query->whereHas('task', function ($q) {
+    
+        $total = $query->whereHas('task', function ($q) {
             $q->whereDate('task_date', Carbon::today());
         })->count();
-
+    
         $completed = TaskAssignment::query()
             ->whereHas('task', function ($q) {
                 $q->whereDate('task_date', Carbon::today());
             })
-            ->where('is_completed', 1)
+            ->where('is_completed', 'completed')
             ->count();
-
+    
+        $notDone = TaskAssignment::query()
+            ->whereHas('task', function ($q) {
+                $q->whereDate('task_date', Carbon::today());
+            })
+            ->where('is_completed', 'not_done')
+            ->count();
+    
         return [
             'total'     => $total,
             'completed' => $completed,
-            'pending'   => $total - $completed,
+            'pending'   => $total - $completed - $notDone,
+            'not_done'  => $notDone,
         ];
     }
 
@@ -291,7 +312,12 @@ class TaskRepository
                 'taskAssignments as completed_tasks' => function ($q) {
                     $q->whereHas('task', function ($q) {
                         $q->whereDate('task_date', Carbon::today());
-                    })->where('is_completed', 1);
+                    })->where('is_completed', 'completed');
+                },
+                'taskAssignments as not_done_tasks' => function ($q) {
+                    $q->whereHas('task', function ($q) {
+                        $q->whereDate('task_date', Carbon::today());
+                    })->where('is_completed', 'not_done');
                 },
             ])
             ->orderBy('role')
@@ -305,7 +331,7 @@ class TaskRepository
         $query = TaskAssignment::query();
 
         $query->where('user_id', $userId)
-            ->where('is_completed', 1);
+            ->where('is_completed', 'completed');
 
         if ($period === 'week') {
             $query->whereHas('task', function ($q) {
@@ -322,6 +348,7 @@ class TaskRepository
         }
         return $query->count();
     }
+    
     public function getDefaultTasksForUser(int $userId): Collection
     {
         /** @var Builder $query */

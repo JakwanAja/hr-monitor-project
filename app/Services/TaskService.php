@@ -162,19 +162,32 @@ class TaskService
     public function completeTask(Task $task, ?string $note): bool
     {
         $assignment = $this->taskRepository->findAssignment($task->id, Auth::id());
-
+    
         if (! $assignment) {
             throw ValidationException::withMessages([
                 'task' => 'Anda tidak memiliki akses untuk menyelesaikan tugas ini.',
             ]);
         }
-
-        if ($assignment->is_completed) {
+    
+        // Tidak bisa complete jika sudah not_done
+        if ($assignment->isNotDone()) {
+            throw ValidationException::withMessages([
+                'task' => 'Tugas ini sudah ditandai tidak dikerjakan karena melewati batas waktu.',
+            ]);
+        }
+    
+        if ($assignment->isCompleted()) {
             throw ValidationException::withMessages([
                 'task' => 'Tugas ini sudah ditandai selesai.',
             ]);
         }
         return $this->taskRepository->completeAssignment($assignment, $note);
+    }
+
+    public function markAllPendingAsNotDone(): int
+    {
+        $today = Carbon::today()->toDateString();
+        return $this->taskRepository->markAllPendingAsNotDone($today);
     }
 
     public function getAllTasksForUserToday(int $userId): Collection
