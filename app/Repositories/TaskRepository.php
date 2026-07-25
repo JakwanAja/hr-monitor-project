@@ -449,4 +449,26 @@ class TaskRepository
             ->orderBy('name')
             ->get();
     }
+
+    // ── Admin: kelola assignment milik bawahan ───────────
+
+    public function findAssignmentById(int $assignmentId): ?TaskAssignment
+    {
+        return TaskAssignment::with('task')->find($assignmentId);
+    }
+
+    public function adminCompleteAssignment(TaskAssignment $assignment): bool
+    {
+        return (bool) $assignment->update([
+            'is_completed' => 'completed',
+            'completed_at' => now(),
+        ]);
+    }
+
+    public function deleteAssignmentById(int $assignmentId): bool
+    {
+        /** @var Builder $query */
+        $query = TaskAssignment::query();
+        return (bool) $query->where('id', $assignmentId)->delete();
+    }
 }

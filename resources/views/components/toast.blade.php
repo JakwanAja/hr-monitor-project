@@ -5,7 +5,7 @@
     Dirender sekali di layouts/app.blade.php
 --}}
 
-@if(session('success'))
+@if(session('task_completed'))
 
 {{-- ── SUCCESS MODAL (Tengah Layar) ───────────────────── --}}
 <div id="toast-success-overlay"
@@ -56,7 +56,7 @@
                 🎉 Luar Biasa!
             </h2>
             <p class="text-gray-500 text-sm leading-relaxed mb-1">
-                {{ session('success') }}
+                {{ session('task_completed') }}
             </p>
             <p class="text-green-600 text-sm font-medium mt-3 mb-6">
                 Terus semangat dan selesaikan tugas berikutnya! 💪
@@ -173,6 +173,76 @@
             dot.addEventListener('animationend', function () { dot.remove(); });
         }
     }
+
+    document.addEventListener('DOMContentLoaded', show);
+})();
+</script>
+
+@elseif(session('success'))
+
+{{-- ── SUCCESS TOAST KECIL (Pojok Kanan Bawah) ────────── --}}
+<div id="toast-success-small"
+     role="alert"
+     class="fixed bottom-6 right-6 z-[9999] flex items-start gap-3 px-5 py-4 rounded-2xl shadow-xl
+            bg-white border border-green-200 max-w-sm w-full
+            translate-y-4 opacity-0 transition-all duration-300 ease-out">
+
+    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+        </svg>
+    </div>
+
+    <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold text-green-800">Berhasil</p>
+        <p class="text-sm text-gray-600 mt-0.5 leading-snug">{{ session('success') }}</p>
+    </div>
+
+    <div class="absolute bottom-0 left-0 h-1 rounded-b-2xl bg-green-400"
+         id="success-small-progress"
+         style="width: 100%; transition: width 4s linear;"></div>
+
+    <button onclick="dismissSuccessSmall()"
+            class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition mt-0.5"
+            aria-label="Tutup">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+    </button>
+</div>
+
+<script>
+(function () {
+    const toast    = document.getElementById('toast-success-small');
+    const progress = document.getElementById('success-small-progress');
+    let   timer;
+
+    function show() {
+        requestAnimationFrame(function () {
+            toast.classList.remove('translate-y-4', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            requestAnimationFrame(function () { progress.style.width = '0%'; });
+        });
+        timer = setTimeout(dismissSuccessSmall, 4000);
+    }
+
+    window.dismissSuccessSmall = function () {
+        clearTimeout(timer);
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-4', 'opacity-0');
+        setTimeout(function () { toast.remove(); }, 300);
+    };
+
+    toast.addEventListener('mouseenter', function () {
+        clearTimeout(timer);
+        progress.style.transition = 'none';
+    });
+    toast.addEventListener('mouseleave', function () {
+        progress.style.transition = 'width 2s linear';
+        progress.style.width = '0%';
+        timer = setTimeout(dismissSuccessSmall, 2000);
+    });
 
     document.addEventListener('DOMContentLoaded', show);
 })();

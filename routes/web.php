@@ -40,6 +40,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         Route::get('/productivity', [ReportController::class, 'productivity'])->name('productivity');
         Route::get('/history', [ReportController::class, 'history'])->name('history');
         Route::get('/ranking', [ReportController::class, 'ranking'])->name('ranking');
+        // Admin kelola assignment bawahan
+        Route::patch('/assignments/{assignmentId}/complete', [ReportController::class, 'completeAssignment'])->name('assignments.complete');
+        Route::delete('/assignments/{assignmentId}', [ReportController::class, 'destroyAssignment'])->name('assignments.destroy');
     });
 });
 

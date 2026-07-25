@@ -334,4 +334,38 @@ class TaskService
     {
         return $this->taskRepository->getDailyStatsForAssistants();
     }
+
+    // ── Admin: kelola assignment milik bawahan ───────────
+
+    public function adminCompleteAssignment(int $assignmentId): bool
+    {
+        $assignment = $this->taskRepository->findAssignmentById($assignmentId);
+
+        if (! $assignment) {
+            throw ValidationException::withMessages([
+                'assignment' => 'Data assignment tidak ditemukan.',
+            ]);
+        }
+
+        if ($assignment->isCompleted()) {
+            throw ValidationException::withMessages([
+                'assignment' => 'Tugas ini sudah selesai.',
+            ]);
+        }
+
+        return $this->taskRepository->adminCompleteAssignment($assignment);
+    }
+
+    public function adminDeleteAssignment(int $assignmentId): bool
+    {
+        $assignment = $this->taskRepository->findAssignmentById($assignmentId);
+
+        if (! $assignment) {
+            throw ValidationException::withMessages([
+                'assignment' => 'Data assignment tidak ditemukan.',
+            ]);
+        }
+
+        return $this->taskRepository->deleteAssignmentById($assignmentId);
+    }
 }

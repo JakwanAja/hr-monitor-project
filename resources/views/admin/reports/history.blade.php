@@ -15,7 +15,6 @@
     <form method="GET" action="{{ route('admin.reports.history') }}"
           class="flex flex-wrap items-center gap-3">
 
-        {{-- Filter User --}}
         <div class="flex items-center gap-2">
             <label class="text-sm font-medium text-gray-700">Pengguna:</label>
             <select name="user_id"
@@ -23,8 +22,7 @@
                            focus:outline-none focus:ring-2 focus:ring-primary-500">
                 <option value="">Semua</option>
                 @foreach($users as $user)
-                    <option value="{{ $user->id }}"
-                        {{ $userId == $user->id ? 'selected' : '' }}>
+                    <option value="{{ $user->id }}" {{ $userId == $user->id ? 'selected' : '' }}>
                         {{ $user->name }}
                         ({{ $user->role === 'hr_staff' ? 'HR Staff' : 'HR Assistant' }})
                     </option>
@@ -32,7 +30,6 @@
             </select>
         </div>
 
-        {{-- Filter Tanggal --}}
         <div class="flex items-center gap-2">
             <label class="text-sm font-medium text-gray-700">Tanggal:</label>
             <input type="date" name="date" value="{{ $date ?? '' }}"
@@ -67,7 +64,7 @@
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-28">Sumber</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600">Catatan</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-28">Status</th>
-                <th class="text-right px-6 py-3.5 font-semibold text-gray-600 w-16">Detail</th>
+                <th class="text-right px-6 py-3.5 font-semibold text-gray-600 w-28">Aksi</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
@@ -75,59 +72,72 @@
                 @foreach($task->assignedUsers as $assignee)
                     @php
                         $assignment = $task->assignments->firstWhere('user_id', $assignee->id);
+                        $status     = $assignment?->is_completed ?? 'pending';
                     @endphp
                     <tr class="hover:bg-gray-50 transition">
+
+                        {{-- Tanggal --}}
                         <td class="px-6 py-4 text-gray-500 text-xs">
                             {{ $task->task_date->translatedFormat('d M Y') }}
                         </td>
+
+                        {{-- Judul --}}
                         <td class="px-6 py-4 w-44">
                             <div class="truncate max-w-[160px] font-medium text-gray-800"
-                                title="{{ $task->title }}">
+                                 title="{{ $task->title }}">
                                 {{ $task->title }}
                             </div>
                         </td>
+
+                        {{-- Penerima --}}
                         <td class="px-6 py-4 w-36">
                             <div class="truncate max-w-[120px] text-gray-700 text-xs font-medium"
-                                title="{{ $assignee->name }}">
+                                 title="{{ $assignee->name }}">
                                 {{ $assignee->name }}
                             </div>
                             <p class="text-xs text-gray-400">
                                 {{ $assignee->role === 'hr_staff' ? 'HR Staff' : 'HR Assistant' }}
                             </p>
                         </td>
+
+                        {{-- Sumber --}}
                         <td class="px-6 py-4 w-28">
                             @if($task->type === 'self')
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full
-                                            text-xs font-medium bg-gray-100 text-gray-600">
+                                             text-xs font-medium bg-gray-100 text-gray-600">
                                     Mandiri
                                 </span>
                             @elseif($task->type === 'assigned')
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full
-                                            text-xs font-medium bg-blue-50 text-blue-700">
+                                             text-xs font-medium bg-blue-50 text-blue-700">
                                     {{ $task->creator?->name ?? 'Admin' }}
                                 </span>
                             @elseif($task->type === 'default')
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full
-                                            text-xs font-medium bg-purple-50 text-purple-700">
+                                             text-xs font-medium bg-purple-50 text-purple-700">
                                     Rutin
                                 </span>
                             @endif
                         </td>
+
+                        {{-- Catatan --}}
                         <td class="px-6 py-4">
                             <div class="truncate max-w-[180px] text-gray-500 text-xs"
-                                title="{{ $assignment?->note ?? '-' }}">
+                                 title="{{ $assignment?->note ?? '-' }}">
                                 {{ $assignment?->note ?? '-' }}
                             </div>
                         </td>
 
-                       {{-- Status --}}
+                        {{-- Status --}}
                         <td class="px-6 py-4 w-28">
-                            <x-task-status-badge :status="$assignment?->is_completed ?? 'pending'" />
+                            <x-task-status-badge :status="$status" />
                         </td>
 
-                        {{-- Detail --}}
-                        <td class="px-6 py-4 w-16">
-                            <div class="flex justify-end">
+                        {{-- Aksi --}}
+                        <td class="px-6 py-4 w-28">
+                            <div class="flex items-center justify-end gap-1.5">
+
+                                {{-- Tombol Detail --}}
                                 <button
                                     onclick="openDetailModal({
                                         title: '{{ addslashes($task->title) }}',
@@ -135,7 +145,7 @@
                                         type: '{{ $task->type }}',
                                         date: '{{ $task->task_date->translatedFormat('d M Y') }}',
                                         source: '{{ addslashes($task->creator?->name ?? 'Sistem') }}',
-                                        status: '{{ $assignment?->is_completed ?? 'pending' }}',
+                                        status: '{{ $status }}',
                                         note: '{{ addslashes($assignment?->note ?? '') }}',
                                         assignees: {{ json_encode($task->assignedUsers->map(fn($u) => [
                                             'name'   => $u->name,
@@ -147,16 +157,42 @@
                                     title="Lihat Detail">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                     </svg>
                                 </button>
+
+                                @if($assignment)
+                                    {{-- Tombol Tandai Selesai (hanya jika belum selesai) --}}
+                                    @if($status !== 'completed')
+                                        <button
+                                            onclick="openCompleteModal({{ $assignment->id }}, '{{ addslashes($task->title) }}', '{{ addslashes($assignee->name) }}')"
+                                            class="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition"
+                                            title="Tandai Selesai">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        </button>
+                                    @endif
+
+                                    {{-- Tombol Hapus Riwayat --}}
+                                    <button
+                                        onclick="openDeleteModal({{ $assignment->id }}, '{{ addslashes($task->title) }}', '{{ addslashes($assignee->name) }}')"
+                                        class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                                        title="Hapus Riwayat">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                @endif
                             </div>
                         </td>
                     </tr>
                 @endforeach
-            @empty  
+            @empty
                 <tr>
                     <td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">
                         {{ $date || $userId ? 'Tidak ada data sesuai filter.' : 'Belum ada riwayat tugas.' }}
@@ -166,5 +202,97 @@
         </tbody>
     </table>
 </div>
+
+{{-- ── MODAL TANDAI SELESAI ─────────────────────────── --}}
+<div id="modal-complete" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4">
+        <div class="px-6 py-5 text-center">
+            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <h3 class="text-base font-semibold text-gray-800 mb-1">Tandai Selesai</h3>
+            <p class="text-sm text-gray-500 mb-1">
+                Tandai tugas <span id="complete-task-title" class="font-semibold text-gray-700"></span>
+            </p>
+            <p class="text-sm text-gray-500 mb-6">
+                milik <span id="complete-assignee-name" class="font-semibold text-gray-700"></span> sebagai selesai?
+            </p>
+            <form id="form-complete" action="" method="POST">
+                @csrf
+                @method('PATCH')
+                <div class="flex justify-center gap-3">
+                    <button type="button"
+                            onclick="document.getElementById('modal-complete').classList.add('hidden')"
+                            class="px-5 py-2 text-sm text-gray-600 font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        Batal
+                    </button>
+                    <button type="submit"
+                            class="px-5 py-2 bg-green-600 hover:bg-green-700 text-white
+                                   text-sm font-medium rounded-lg transition">
+                        Ya, Selesaikan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- ── MODAL HAPUS RIWAYAT ──────────────────────────── --}}
+<div id="modal-delete" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4">
+        <div class="px-6 py-5 text-center">
+            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </div>
+            <h3 class="text-base font-semibold text-gray-800 mb-1">Hapus Riwayat</h3>
+            <p class="text-sm text-gray-500 mb-1">
+                Hapus riwayat tugas <span id="delete-task-title" class="font-semibold text-gray-700"></span>
+            </p>
+            <p class="text-sm text-gray-500 mb-2">
+                milik <span id="delete-assignee-name" class="font-semibold text-gray-700"></span>?
+            </p>
+            <p class="text-xs text-red-500 mb-6">Tindakan ini tidak dapat dibatalkan.</p>
+            <form id="form-delete" action="" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="flex justify-center gap-3">
+                    <button type="button"
+                            onclick="document.getElementById('modal-delete').classList.add('hidden')"
+                            class="px-5 py-2 text-sm text-gray-600 font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        Batal
+                    </button>
+                    <button type="submit"
+                            class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white
+                                   text-sm font-medium rounded-lg transition">
+                        Ya, Hapus
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openCompleteModal(assignmentId, taskTitle, assigneeName) {
+        document.getElementById('complete-task-title').textContent = taskTitle;
+        document.getElementById('complete-assignee-name').textContent = assigneeName;
+        document.getElementById('form-complete').action =
+            `/admin/reports/assignments/${assignmentId}/complete`;
+        document.getElementById('modal-complete').classList.remove('hidden');
+    }
+
+    function openDeleteModal(assignmentId, taskTitle, assigneeName) {
+        document.getElementById('delete-task-title').textContent = taskTitle;
+        document.getElementById('delete-assignee-name').textContent = assigneeName;
+        document.getElementById('form-delete').action =
+            `/admin/reports/assignments/${assignmentId}`;
+        document.getElementById('modal-delete').classList.remove('hidden');
+    }
+</script>
 
 @endsection

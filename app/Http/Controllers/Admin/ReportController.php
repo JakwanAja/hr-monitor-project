@@ -7,6 +7,7 @@ use App\Services\TaskService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class ReportController extends Controller
 {
@@ -68,5 +69,37 @@ class ReportController extends Controller
         ->values();
     
         return view('admin.reports.ranking', compact('rankings', 'period'));
+    }
+
+    /**
+     * Admin tandai selesai sebuah assignment milik bawahan.
+     * Route: PATCH /admin/reports/assignments/{assignment}/complete
+     */
+    public function completeAssignment(int $assignmentId)
+    {
+        try {
+            $this->taskService->adminCompleteAssignment($assignmentId);
+            return redirect()->back()
+                ->with('task_completed', 'Tugas berhasil ditandai selesai.');
+        } catch (ValidationException $e) {
+            return redirect()->back()
+                ->with('error', array_values($e->errors())[0][0] ?? 'Gagal menandai selesai.');
+        }
+    }
+
+    /**
+     * Admin hapus sebuah assignment dari riwayat bawahan.
+     * Route: DELETE /admin/reports/assignments/{assignment}
+     */
+    public function destroyAssignment(int $assignmentId)
+    {
+        try {
+            $this->taskService->adminDeleteAssignment($assignmentId);
+            return redirect()->back()
+                ->with('success', 'Riwayat tugas berhasil dihapus.');
+        } catch (ValidationException $e) {
+            return redirect()->back()
+                ->with('error', array_values($e->errors())[0][0] ?? 'Gagal menghapus riwayat.');
+        }
     }
 }
