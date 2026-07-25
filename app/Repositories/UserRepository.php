@@ -74,4 +74,9 @@ class UserRepository
 
         return $query->exists();
     }
+
+    public function updateProfile(User $user, array $data): bool
+    {
+        return $user->update($data);
+    }
 }

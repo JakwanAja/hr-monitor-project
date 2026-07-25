@@ -24,15 +24,29 @@
         {{-- User Info + Logout --}}
         <div class="border-t border-white/10 p-4">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-primary-600 flex items-center justify-center flex-shrink-0">
-                    <span class="text-sm font-semibold text-white">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                    </span>
-                </div>
+                {{-- Avatar: klik → ke halaman profil --}}
+                <a href="{{ route('profile.show') }}"
+                   class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-transparent
+                          hover:ring-primary-400 transition"
+                   title="Lihat Profil">
+                    @if(Auth::user()->image)
+                        <img src="{{ asset('storage/' . Auth::user()->image) }}"
+                             alt="{{ Auth::user()->name }}"
+                             class="w-full h-full object-cover">
+                    @else
+                        <div class="w-full h-full bg-primary-600 flex items-center justify-center">
+                            <span class="text-sm font-semibold text-white">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </span>
+                        </div>
+                    @endif
+                </a>
+
                 <div class="flex-1 min-w-0">
-                    <p class="text-sm font-semibold text-white truncate">
+                    <a href="{{ route('profile.show') }}"
+                       class="block text-sm font-semibold text-white truncate hover:text-primary-300 transition">
                         {{ Auth::user()->name }}
-                    </p>
+                    </a>
                     <p class="text-xs text-slate-400 truncate">
                         {{ match(Auth::user()->role) {
                             'admin'        => 'Administrator',

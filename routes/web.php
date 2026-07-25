@@ -12,6 +12,7 @@ use App\Http\Controllers\Staff\TaskController as StaffTaskController;
 use App\Http\Controllers\Assistant\DashboardController as AssistantDashboard;
 use App\Http\Controllers\Assistant\TaskController as AssistantTaskController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
 
 // ── Auth (All Roles) ────────────────────────────────────────────────────────
 Route::get('/', fn() => redirect()->route('login'));
@@ -78,4 +79,11 @@ Route::middleware('auth')->prefix('notifications')->name('notifications.')->grou
     Route::get('/', [NotificationController::class, 'index'])->name('index');
     Route::patch('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
     Route::patch('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read.all');
+});
+
+// ── Profile (All Roles) ──────────────────────────────────────────────────────
+Route::middleware('auth')->prefix('profile')->name('profile.')->group(function () {
+    Route::get('/', [ProfileController::class, 'show'])->name('show');
+    Route::patch('/update', [ProfileController::class, 'update'])->name('update');
+    Route::patch('/password', [ProfileController::class, 'updatePassword'])->name('password');
 });
