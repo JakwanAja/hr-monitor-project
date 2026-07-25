@@ -126,7 +126,7 @@ class TaskController extends Controller
         try {
             $this->taskService->completeTask($task, $request->note);
             return redirect()->route('staff.tasks.index')
-                ->with('success', 'Tugas berhasil ditandai selesai.');
+                ->with('success', 'Terima kasih sudah menyelesaikan tugas ini dengan baik. Tetap semangat!');
         } catch (ValidationException $e) {
             return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
         }
@@ -153,7 +153,7 @@ class TaskController extends Controller
         try {
             $this->taskService->completeTask($task, $request->note);
             return redirect()->route('staff.tasks.daily')
-                ->with('success', 'Tugas berhasil ditandai selesai.');
+                ->with('success', 'Terima kasih sudah menyelesaikan tugas ini dengan baik. Tetap semangat!');
         } catch (ValidationException $e) {
             return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
         }
@@ -174,7 +174,7 @@ class TaskController extends Controller
         try {
             $this->taskService->completeTask($task, $request->note);
             return redirect()->route('staff.tasks.assigned')
-                ->with('success', 'Tugas berhasil ditandai selesai.');
+                ->with('success', 'Terima kasih sudah menyelesaikan tugas ini dengan baik. Tetap semangat!');
         } catch (ValidationException $e) {
             return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
         }

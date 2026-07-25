@@ -114,39 +114,8 @@
             </div>
         </header>
 
-        {{-- Flash Messages --}}
-        @if(session('success') || session('error'))
-            <div class="px-6 pt-4">
-                @if(session('success'))
-                    <div id="flash-success"
-                         class="flex items-center gap-3 p-4 mb-2 bg-green-50 border border-green-200
-                                text-green-700 rounded-xl text-sm">
-                        <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                  clip-rule="evenodd"/>
-                        </svg>
-                        <span>{{ session('success') }}</span>
-                        <button onclick="document.getElementById('flash-success').remove()"
-                                class="ml-auto text-green-500 hover:text-green-700 text-lg leading-none">✕</button>
-                    </div>
-                @endif
-                @if(session('error'))
-                    <div id="flash-error"
-                         class="flex items-center gap-3 p-4 mb-2 bg-red-50 border border-red-200
-                                text-red-700 rounded-xl text-sm">
-                        <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-11.25a.75.75 0 011.5 0v4.5a.75.75 0 01-1.5 0v-4.5zm.75 7.5a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                                  clip-rule="evenodd"/>
-                        </svg>
-                        <span>{{ session('error') }}</span>
-                        <button onclick="document.getElementById('flash-error').remove()"
-                                class="ml-auto text-red-500 hover:text-red-700 text-lg leading-none">✕</button>
-                    </div>
-                @endif
-            </div>
-        @endif
+        {{-- Toast Pop-up (success / error) --}}
+        @include('components.toast')
 
         {{-- Page Content --}}
         <main class="flex-1 overflow-y-auto px-6 py-6">

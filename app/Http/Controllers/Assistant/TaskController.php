@@ -32,14 +32,13 @@ class TaskController extends Controller
         try {
             $this->taskService->completeTask($task, $request->note);
             return redirect()->route('assistant.tasks.routine')
-                ->with('success', 'Tugas berhasil ditandai selesai.');
+                ->with('success', 'Terima kasih sudah menyelesaikan tugas ini dengan baik. Tetap semangat!');
         } catch (ValidationException $e) {
             return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
         }
     }
 
     // ── Tugas dari Admin & Staff (digabung) ──────────────
-
     public function assignedIndex()
     {
         $tasks = $this->taskService->getAllAssignedTasksForAssistant(Auth::id());
@@ -55,7 +54,7 @@ class TaskController extends Controller
         try {
             $this->taskService->completeTask($task, $request->note);
             return redirect()->route('assistant.tasks.assigned')
-                ->with('success', 'Tugas berhasil ditandai selesai.');
+                ->with('success', 'Terima kasih sudah menyelesaikan tugas ini dengan baik. Tetap semangat!');
         } catch (ValidationException $e) {
             return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
         }
@@ -121,7 +120,7 @@ class TaskController extends Controller
         try {
             $this->taskService->completeTask($task, $request->note);
             return redirect()->route('assistant.tasks.index')
-                ->with('success', 'Tugas berhasil ditandai selesai.');
+                ->with('success', 'Terima kasih sudah menyelesaikan tugas ini dengan baik. Tetap semangat!');
         } catch (ValidationException $e) {
             return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
         }
