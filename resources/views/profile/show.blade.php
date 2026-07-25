@@ -17,7 +17,7 @@
 @section('content')
 
 @php
-    $user     = Auth::user();
+    $user      = Auth::user();
     $roleLabel = match($user->role) {
         'admin'        => 'Administrator',
         'hr_staff'     => 'HR Staff',
@@ -25,55 +25,72 @@
         default        => $user->role,
     };
     $roleColor = match($user->role) {
-        'admin'        => 'bg-red-50 text-red-700',
-        'hr_staff'     => 'bg-blue-50 text-blue-700',
-        'hr_assistant' => 'bg-purple-50 text-purple-700',
-        default        => 'bg-gray-100 text-gray-600',
+        'admin'        => 'bg-red-50 text-red-700 border-red-100',
+        'hr_staff'     => 'bg-blue-50 text-blue-700 border-blue-100',
+        'hr_assistant' => 'bg-purple-50 text-purple-700 border-purple-100',
+        default        => 'bg-gray-100 text-gray-600 border-gray-200',
     };
 @endphp
 
-<div class="max-w-3xl mx-auto space-y-6">
+{{-- ── HEADER PROFIL (full width) ─────────────────────── --}}
+<div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+    <div class="flex items-center gap-5">
 
-    {{-- ── KARTU HEADER PROFIL ─────────────────────────── --}}
-    <div class="bg-white rounded-xl border border-gray-200 p-6">
-        <div class="flex items-center gap-5">
-
-            {{-- Avatar --}}
-            <div class="relative flex-shrink-0" x-data="avatarPreview()">
-                <div class="w-20 h-20 rounded-full overflow-hidden ring-4 ring-primary-100">
-                    <img id="avatar-preview"
-                         src="{{ $user->image ? asset('storage/' . $user->image) : '' }}"
-                         alt="{{ $user->name }}"
-                         class="{{ $user->image ? '' : 'hidden' }} w-full h-full object-cover">
-                    <div id="avatar-initials"
-                         class="{{ $user->image ? 'hidden' : '' }} w-full h-full bg-primary-600 flex items-center justify-center">
-                        <span class="text-2xl font-bold text-white">
-                            {{ strtoupper(substr($user->name, 0, 1)) }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Info --}}
-            <div class="flex-1 min-w-0">
-                <h2 class="text-xl font-bold text-gray-900 truncate">{{ $user->name }}</h2>
-                <p class="text-sm text-gray-500 mt-0.5">{{ $user->email }}</p>
-                <span class="inline-flex items-center mt-2 px-2.5 py-1 rounded-full text-xs font-medium {{ $roleColor }}">
-                    {{ $roleLabel }}
+        {{-- Avatar --}}
+        <div class="w-20 h-20 rounded-full overflow-hidden ring-4 ring-primary-100 flex-shrink-0">
+            <img id="avatar-preview"
+                 src="{{ $user->image ? asset('storage/' . $user->image) : '' }}"
+                 alt="{{ $user->name }}"
+                 class="{{ $user->image ? '' : 'hidden' }} w-full h-full object-cover">
+            <div id="avatar-initials"
+                 class="{{ $user->image ? 'hidden' : '' }} w-full h-full bg-primary-600
+                        flex items-center justify-center">
+                <span class="text-2xl font-bold text-white">
+                    {{ strtoupper(substr($user->name, 0, 1)) }}
                 </span>
             </div>
         </div>
-    </div>
 
-    {{-- ── FORM EDIT PROFIL ─────────────────────────────── --}}
+        {{-- Info --}}
+        <div class="flex-1 min-w-0">
+            <h2 class="text-xl font-bold text-gray-900 truncate">{{ $user->name }}</h2>
+            <p class="text-sm text-gray-500 mt-0.5">{{ $user->email }}</p>
+            <span class="inline-flex items-center mt-2 px-2.5 py-1 rounded-full text-xs font-medium
+                         border {{ $roleColor }}">
+                {{ $roleLabel }}
+            </span>
+        </div>
+
+        {{-- Akun aktif sejak --}}
+        <div class="hidden md:block text-right flex-shrink-0">
+            <p class="text-xs text-gray-400">Bergabung sejak</p>
+            <p class="text-sm font-medium text-gray-700 mt-0.5">
+                {{ $user->created_at->locale('id')->translatedFormat('d M Y') }}
+            </p>
+        </div>
+    </div>
+</div>
+
+{{-- ── 2 KOLOM: Edit Profil | Ganti Password ──────────── --}}
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    {{-- ── KOLOM KIRI: Edit Profil ─────────────────────── --}}
     <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100">
-            <h3 class="text-sm font-semibold text-gray-800">Informasi Profil</h3>
-            <p class="text-xs text-gray-500 mt-0.5">Perbarui nama, email, dan foto profil Anda</p>
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-lg bg-primary-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-800">Informasi Profil</h3>
+                <p class="text-xs text-gray-500">Perbarui nama, email, dan foto profil</p>
+            </div>
         </div>
 
         <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data"
-              class="px-6 py-5 space-y-5">
+              class="px-6 py-5 space-y-4">
             @csrf
             @method('PATCH')
 
@@ -120,7 +137,6 @@
                         this.previewUrl = URL.createObjectURL(file);
                         this.hasPhoto = true;
                         this.removePhoto = false;
-                        // Sync global avatar preview
                         document.getElementById('avatar-preview').src = this.previewUrl;
                         document.getElementById('avatar-preview').classList.remove('hidden');
                         document.getElementById('avatar-initials').classList.add('hidden');
@@ -136,16 +152,16 @@
                 }">
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Foto Profil</label>
 
-                {{-- Preview & kontrol foto --}}
-                <div class="flex items-start gap-4">
-                    {{-- Thumbnail preview --}}
-                    <div class="w-16 h-16 rounded-xl overflow-hidden border border-gray-200 bg-gray-50 flex-shrink-0">
+                <div class="flex items-start gap-3">
+                    {{-- Thumbnail --}}
+                    <div class="w-14 h-14 rounded-xl overflow-hidden border border-gray-200
+                                bg-gray-50 flex-shrink-0">
                         <template x-if="hasPhoto && previewUrl">
                             <img :src="previewUrl" class="w-full h-full object-cover">
                         </template>
                         <template x-if="!hasPhoto || !previewUrl">
                             <div class="w-full h-full bg-primary-100 flex items-center justify-center">
-                                <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
@@ -153,12 +169,11 @@
                         </template>
                     </div>
 
-                    {{-- Tombol & info --}}
                     <div class="flex-1">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium
-                                          text-primary-600 border border-primary-300 hover:bg-primary-50
-                                          rounded-lg transition">
+                            <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5
+                                          text-xs font-medium text-primary-600 border border-primary-300
+                                          hover:bg-primary-50 rounded-lg transition">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
@@ -166,26 +181,19 @@
                                 Pilih Foto
                                 <input type="file" name="image" x-ref="fileInput"
                                        accept="image/jpg,image/jpeg,image/png,image/webp"
-                                       @change="handleFile($event)"
-                                       class="hidden">
+                                       @change="handleFile($event)" class="hidden">
                             </label>
-
-                            <button type="button"
-                                    x-show="hasPhoto"
-                                    @click="triggerRemove()"
-                                    class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium
+                            <button type="button" x-show="hasPhoto" @click="triggerRemove()"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium
                                            text-red-600 border border-red-200 hover:bg-red-50 rounded-lg transition">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                 </svg>
-                                Hapus Foto
+                                Hapus
                             </button>
                         </div>
-
                         <p class="mt-1.5 text-xs text-gray-400">JPG, PNG, WebP. Maks 2 MB.</p>
-
-                        {{-- Hidden field untuk sinyal hapus foto --}}
                         <input type="hidden" name="remove_image" :value="removePhoto ? '1' : '0'">
                     </div>
                 </div>
@@ -195,14 +203,12 @@
                 @enderror
             </div>
 
-            {{-- Tombol Simpan --}}
-            <div class="flex justify-end pt-2">
+            <div class="pt-1">
                 <button type="submit"
-                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700
-                               text-white text-sm font-medium rounded-lg transition">
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600
+                               hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M5 13l4 4L19 7"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
                     Simpan Perubahan
                 </button>
@@ -210,27 +216,34 @@
         </form>
     </div>
 
-    {{-- ── FORM GANTI PASSWORD ──────────────────────────── --}}
+    {{-- ── KOLOM KANAN: Ganti Password ─────────────────── --}}
     <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100">
-            <h3 class="text-sm font-semibold text-gray-800">Ganti Password</h3>
-            <p class="text-xs text-gray-500 mt-0.5">Pastikan password baru minimal 8 karakter</p>
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-lg bg-yellow-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-800">Ganti Password</h3>
+                <p class="text-xs text-gray-500">Minimal 8 karakter</p>
+            </div>
         </div>
 
         <form action="{{ route('profile.password') }}" method="POST"
-              class="px-6 py-5 space-y-5">
+              class="px-6 py-5 space-y-4">
             @csrf
             @method('PATCH')
 
-            {{-- Password Lama --}}
+            {{-- Password Saat Ini --}}
             <div x-data="{ show: false }">
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">
                     Password Saat Ini <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
                     <input :type="show ? 'text' : 'password'"
-                           name="current_password"
-                           required
+                           name="current_password" required
                            class="w-full px-4 py-2.5 pr-10 border rounded-lg text-sm transition
                                   focus:outline-none focus:ring-2 focus:ring-primary-500
                                   {{ $errors->has('current_password') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}">
@@ -260,8 +273,7 @@
                 </label>
                 <div class="relative">
                     <input :type="show ? 'text' : 'password'"
-                           name="password"
-                           required minlength="8"
+                           name="password" required minlength="8"
                            class="w-full px-4 py-2.5 pr-10 border rounded-lg text-sm transition
                                   focus:outline-none focus:ring-2 focus:ring-primary-500
                                   {{ $errors->has('password') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}">
@@ -291,10 +303,9 @@
                 </label>
                 <div class="relative">
                     <input :type="show ? 'text' : 'password'"
-                           name="password_confirmation"
-                           required
-                           class="w-full px-4 py-2.5 pr-10 border rounded-lg text-sm transition
-                                  focus:outline-none focus:ring-2 focus:ring-primary-500 border-gray-300">
+                           name="password_confirmation" required
+                           class="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg text-sm
+                                  transition focus:outline-none focus:ring-2 focus:ring-primary-500">
                     <button type="button" @click="show = !show"
                             class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                         <svg x-show="!show" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -311,11 +322,15 @@
                 </div>
             </div>
 
-            {{-- Tombol Simpan --}}
-            <div class="flex justify-end pt-2">
+            {{-- Info keamanan --}}
+            <div class="bg-yellow-50 border border-yellow-100 rounded-lg px-4 py-3 text-xs text-yellow-700">
+                Setelah mengganti password, Anda akan tetap dalam sesi yang sama.
+            </div>
+
+            <div class="pt-1">
                 <button type="submit"
-                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-yellow-500 hover:bg-yellow-600
-                               text-white text-sm font-medium rounded-lg transition">
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-yellow-500
+                               hover:bg-yellow-600 text-white text-sm font-medium rounded-lg transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>

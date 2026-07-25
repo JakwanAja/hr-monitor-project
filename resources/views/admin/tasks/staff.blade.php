@@ -44,7 +44,11 @@
                 <td class="px-6 py-4">
                     <div class="truncate max-w-[180px] text-gray-500"
                          title="{{ $task->description ?? '-' }}">
-                        {{ $task->description ?? '-' }}
+                        @if($task->description)
+                            {!! linkify(e($task->description)) !!}
+                        @else
+                            -
+                        @endif
                     </div>
                 </td>
                 <td class="px-6 py-4 w-32">

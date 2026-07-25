@@ -13,7 +13,7 @@
 {{-- Filter Tanggal --}}
 <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
     <form method="GET" action="{{ route('admin.reports.productivity') }}"
-          class="flex items-center gap-3">
+          class="flex flex-wrap items-center gap-3">
         <label class="text-sm font-medium text-gray-700">Tanggal:</label>
         <input type="date" name="date" value="{{ $date }}"
                class="px-4 py-2 border border-gray-300 rounded-lg text-sm
@@ -23,6 +23,13 @@
                        text-sm font-medium rounded-lg transition">
             Tampilkan
         </button>
+        @if($date !== \Carbon\Carbon::today()->toDateString())
+            <a href="{{ route('admin.reports.productivity') }}"
+               class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800
+                      border border-gray-300 rounded-lg transition">
+                Hari Ini
+            </a>
+        @endif
     </form>
 </div>
 

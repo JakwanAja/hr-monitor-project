@@ -12,7 +12,7 @@
 
 {{-- Filter Period --}}
 <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
-    <div class="flex items-center gap-3">
+    <div class="flex flex-wrap items-center gap-3">
         <label class="text-sm font-medium text-gray-700">Periode:</label>
         <a href="{{ route('admin.reports.ranking', ['period' => 'week']) }}"
            class="px-4 py-2 text-sm font-medium rounded-lg transition

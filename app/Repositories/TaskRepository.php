@@ -222,14 +222,32 @@ class TaskRepository
         /** @var Builder $query */
         $query = $this->model->newQuery();
 
-        return $query
+        // Tasks created by staff (self + assigned)
+        $staffCreatedTasks = $query
             ->with(['creator:id,name', 'assignments', 'assignedUsers:id,name,role'])
             ->whereHas('creator', function ($q) {
                 $q->where('role', 'hr_staff');
             })
-            ->whereDate('task_date', Carbon::today())
-            ->orderByDesc('created_at')
-            ->get();
+            ->whereIn('type', ['self', 'assigned'])
+            ->whereDate('task_date', Carbon::today());
+
+        // Union with tasks assigned by admin to ANY staff member
+        return $staffCreatedTasks->union(
+            Task::query()
+                ->with(['creator:id,name', 'assignments', 'assignedUsers:id,name,role'])
+                ->whereHas('assignments', function ($q) {
+                    $q->whereHas('user', function ($q) {
+                        $q->where('role', 'hr_staff');
+                    });
+                })
+                ->whereHas('creator', function ($q) {
+                    $q->where('role', 'admin');
+                })
+                ->where('type', 'assigned')
+                ->whereDate('task_date', Carbon::today())
+        )
+        ->orderByDesc('created_at')
+        ->get();
     }
 
     public function getAllTasksForAssistant(): Collection

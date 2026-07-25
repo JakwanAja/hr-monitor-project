@@ -108,9 +108,42 @@
                 </a>
 
                 {{-- Tanggal --}}
-                <div class="text-xs text-gray-500 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                    {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+                <div class="text-xs text-gray-500 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 leading-tight text-center">
+                    <div>{{ \Carbon\Carbon::now()->locale('id')->translatedFormat('D, d M Y') }}</div>
                 </div>
+
+                {{-- Divider --}}
+                <div class="w-px h-6 bg-gray-200"></div>
+
+                {{-- Avatar Topbar → Profil --}}
+                <a href="{{ route('profile.show') }}"
+                   title="Profil Saya"
+                   class="flex items-center gap-2.5 pl-1 hover:opacity-80 transition">
+                    <div class="w-8 h-8 rounded-full overflow-hidden ring-2 ring-gray-200 flex-shrink-0">
+                        @if(Auth::user()->image)
+                            <img src="{{ asset('storage/' . Auth::user()->image) }}"
+                                 alt="{{ Auth::user()->name }}"
+                                 class="w-full h-full object-cover">
+                        @else
+                            <div class="w-full h-full bg-primary-600 flex items-center justify-center">
+                                <span class="text-xs font-bold text-white">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </span>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="hidden sm:block leading-tight">
+                        <p class="text-xs font-semibold text-gray-700 truncate max-w-[100px]">{{ Auth::user()->name }}</p>
+                        <p class="text-[11px] text-gray-400">
+                            {{ match(Auth::user()->role) {
+                                'admin'        => 'Administrator',
+                                'hr_staff'     => 'HR Staff',
+                                'hr_assistant' => 'HR Assistant',
+                                default        => Auth::user()->role,
+                            } }}
+                        </p>
+                    </div>
+                </a>
             </div>
         </header>
 

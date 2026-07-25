@@ -9,10 +9,8 @@
     Profil Saya
 </a>
 
-{{-- Divider --}}
-<div class="pt-1 pb-2">
-    <p class="px-4 text-[11px] font-semibold text-slate-500 uppercase tracking-widest">Menu</p>
-</div>
+{{-- Separator --}}
+<div class="my-2 border-t border-white/10"></div>
 
 {{-- Dashboard --}}
 <a href="{{ route('admin.dashboard') }}"
