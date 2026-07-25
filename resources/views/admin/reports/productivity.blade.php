@@ -58,6 +58,10 @@
                         <p class="text-lg font-bold text-yellow-600">{{ $item['pending'] }}</p>
                         <p class="text-xs text-gray-400">Pending</p>
                     </div>
+                    <div class="text-center">
+                        <p class="text-lg font-bold text-red-500">{{ $item['not_done'] }}</p>
+                        <p class="text-xs text-gray-400">Tdk Dikerjakan</p>
+                    </div>
                     @php
                         $pct = $item['total'] > 0
                             ? round(($item['completed'] / $item['total']) * 100)
@@ -77,33 +81,32 @@
             @if($item['tasks']->count() > 0)
                 <div class="divide-y divide-gray-50">
                     @foreach($item['tasks'] as $assignment)
+                        @php
+                            $taskDone    = $assignment->is_completed === 'completed';
+                            $taskNotDone = $assignment->is_completed === 'not_done';
+                        @endphp
                         <div class="px-6 py-3 flex items-center gap-3">
                             <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0
-                                        {{ $assignment->is_completed ? 'border-green-500 bg-green-500' : 'border-gray-300' }}">
-                                @if($assignment->is_completed)
+                                        {{ $taskDone ? 'border-green-500 bg-green-500' : ($taskNotDone ? 'border-red-400 bg-red-400' : 'border-gray-300') }}">
+                                @if($taskDone)
                                     <svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
                                               d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                               clip-rule="evenodd"/>
                                     </svg>
+                                @elseif($taskNotDone)
+                                    <svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                              clip-rule="evenodd"/>
+                                    </svg>
                                 @endif
                             </div>
-                            <p class="text-sm text-gray-700 flex-1
-                                      {{ $assignment->is_completed ? 'line-through text-gray-400' : '' }}">
+                            <p class="text-sm flex-1
+                                      {{ $taskDone ? 'line-through text-gray-400' : ($taskNotDone ? 'text-red-400' : 'text-gray-700') }}">
                                 {{ $assignment->task?->title ?? '-' }}
                             </p>
-                            <span class="text-xs px-2 py-0.5 rounded-full
-                                {{ $assignment->task?->type === 'self'
-                                    ? 'bg-gray-100 text-gray-600'
-                                    : ($assignment->task?->type === 'default'
-                                        ? 'bg-purple-50 text-purple-700'
-                                        : 'bg-blue-50 text-blue-700') }}">
-                                {{ match($assignment->task?->type) {
-                                    'self'    => 'Mandiri',
-                                    'default' => 'Rutin',
-                                    default   => 'Ditugaskan',
-                                } }}
-                            </span>
+                            <x-task-status-badge :status="$assignment->is_completed ?? 'pending'" />
                         </div>
                     @endforeach
                 </div>

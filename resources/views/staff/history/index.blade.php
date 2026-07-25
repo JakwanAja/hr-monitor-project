@@ -127,8 +127,19 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="px-6 py-12 text-center text-gray-400 text-sm">
-                        {{ $date ? 'Tidak ada tugas pada tanggal tersebut.' : 'Belum ada riwayat tugas.' }}
+                    <td colspan="6" class="px-6 py-14 text-center">
+                        <div class="flex flex-col items-center gap-2">
+                            <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <p class="text-sm font-medium text-gray-500">
+                                {{ $date ? 'Tidak ada tugas pada tanggal tersebut.' : 'Belum ada riwayat tugas.' }}
+                            </p>
+                            @if(!$date)
+                                <p class="text-xs text-gray-400">Riwayat akan muncul setelah kamu menyelesaikan tugas hari ini.</p>
+                            @endif
+                        </div>
                     </td>
                 </tr>
             @endforelse

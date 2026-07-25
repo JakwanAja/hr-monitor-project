@@ -12,7 +12,7 @@
     @include('components.notification-popup')
 
     {{-- ── Stat Cards ──────────────────────────────────────── --}}
-    <div class="grid grid-cols-4 gap-5 mb-8">
+    <div class="grid grid-cols-5 gap-5 mb-8">
         <div class="bg-white rounded-xl border border-gray-200 p-5">
             <div class="flex items-center justify-between mb-3">
                 <p class="text-sm font-medium text-gray-500">Total Tugas</p>

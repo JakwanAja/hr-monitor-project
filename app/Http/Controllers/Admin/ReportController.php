@@ -41,12 +41,13 @@ class ReportController extends Controller
                 })
                 ->with('task:id,title,type')
                 ->get();
-    
+
             return [
                 'user'      => $user,
                 'total'     => $assignments->count(),
-                'completed' => $assignments->where('is_completed', 1)->count(),
-                'pending'   => $assignments->where('is_completed', 0)->count(),
+                'completed' => $assignments->where('is_completed', 'completed')->count(),
+                'pending'   => $assignments->where('is_completed', 'pending')->count(),
+                'not_done'  => $assignments->where('is_completed', 'not_done')->count(),
                 'tasks'     => $assignments,
             ];
         });
