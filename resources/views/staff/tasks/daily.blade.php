@@ -23,7 +23,7 @@
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-48">Judul</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600">Deskripsi</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-28">Status</th>
-                <th class="text-right px-6 py-3.5 font-semibold text-gray-600 w-20">Aksi</th>
+                <th class="text-right px-6 py-3.5 font-semibold text-gray-600 w-28">Aksi</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
@@ -48,8 +48,31 @@
                     <td class="px-6 py-4 w-28">
                         <x-task-status-badge :status="$status" />
                     </td>
-                    <td class="px-6 py-4 w-20">
-                        <div class="flex items-center justify-end whitespace-nowrap">
+                    <td class="px-6 py-4 w-28">
+                        <div class="flex items-center justify-end gap-2 whitespace-nowrap">
+                            {{-- Tombol Detail --}}
+                            <button
+                                onclick="openDetailModal({
+                                    title: '{{ addslashes($task->title) }}',
+                                    description: '{{ addslashes($task->description ?? '') }}',
+                                    type: '{{ $task->type }}',
+                                    date: '{{ $task->task_date->translatedFormat('d M Y') }}',
+                                    source: 'Sistem',
+                                    status: '{{ $status }}',
+                                    note: '{{ addslashes($assignment?->note ?? '') }}',
+                                    assignees: []
+                                })"
+                                class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
+                                title="Lihat Detail">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </button>
+
+                            {{-- Tombol Selesai / Label --}}
                             @if($status === 'pending')
                                 <button
                                     onclick="openCompleteModal({{ $task->id }}, '{{ addslashes($task->title) }}')"
@@ -79,7 +102,7 @@
     </table>
 </div>
 
-{{-- Modal Checklist Selesai --}}
+{{-- ── Modal Checklist Selesai ─────────────────────────── --}}
 <div id="modal-complete" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
@@ -91,26 +114,6 @@
                     class="text-gray-400 hover:text-gray-600">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-            <button
-                onclick="openDetailModal({
-                    title: '{{ addslashes($task->title) }}',
-                    description: '{{ addslashes($task->description ?? '') }}',
-                    type: '{{ $task->type }}',
-                    date: '{{ $task->task_date->translatedFormat('d M Y') }}',
-                    source: '{{ addslashes($task->creator?->name ?? 'Sistem') }}',
-                    status: '{{ $status ?? 'pending' }}',
-                    note: '{{ addslashes($assignment?->note ?? '') }}',
-                    assignees: []
-                })"
-                class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
-                title="Lihat Detail">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                 </svg>
             </button>
         </div>
