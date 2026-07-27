@@ -130,7 +130,7 @@
 
                         {{-- Status --}}
                         <td class="px-6 py-4 w-28">
-                            <x-task-status-badge :status="$status" />
+                            <x-task-status-badge :status="$status" :completedAt="$assignment?->completed_at" />
                         </td>
 
                         {{-- Aksi --}}

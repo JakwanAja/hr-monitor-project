@@ -113,7 +113,7 @@
                                       {{ $taskDone ? 'line-through text-gray-400' : ($taskNotDone ? 'text-red-400' : 'text-gray-700') }}">
                                 {{ $assignment->task?->title ?? '-' }}
                             </p>
-                            <x-task-status-badge :status="$assignment->is_completed ?? 'pending'" />
+                            <x-task-status-badge :status="$assignment->is_completed ?? 'pending'" :completedAt="$assignment?->completed_at" />
                         </div>
                     @endforeach
                 </div>

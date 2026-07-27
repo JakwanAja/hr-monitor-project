@@ -97,7 +97,7 @@
 
                     {{-- Status --}}
                     <td class="px-6 py-4 w-28">
-                        <x-task-status-badge :status="$assignment?->is_completed ?? 'pending'" />
+                        <x-task-status-badge :status="$assignment?->is_completed ?? 'pending'" :completedAt="$assignment?->completed_at" />
                     </td>
 
                     {{-- Detail --}}

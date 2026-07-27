@@ -50,7 +50,7 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 w-28">
-                        <x-task-status-badge :status="$status" />
+                        <x-task-status-badge :status="$status" :completedAt="$assignment?->completed_at" />
                     </td>
                     <td class="px-6 py-4 w-20">
                         <div class="flex items-center justify-end whitespace-nowrap">
