@@ -95,8 +95,8 @@ class TaskRepository
     
         return $query
             ->whereHas('task', function ($q) use ($today) {
-                // Semua task sebelum hari ini yang masih pending
-                $q->whereDate('task_date', '<', $today);
+                // Semua task hingga hari ini (termasuk hari ini) yang masih pending
+                $q->whereDate('task_date', '<=', $today);
             })
             ->where('is_completed', 'pending')
             ->update(['is_completed' => 'not_done']);
