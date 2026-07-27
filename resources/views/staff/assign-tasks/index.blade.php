@@ -28,7 +28,8 @@
 
 {{-- Tabel --}}
 <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[580px]">
         <thead>
             <tr class="bg-gray-50 border-b border-gray-200">
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-48">Judul</th>
@@ -119,6 +120,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 {{-- Modal Tambah, Edit, Hapus — sama persis dengan Admin tapi action route berbeda --}}

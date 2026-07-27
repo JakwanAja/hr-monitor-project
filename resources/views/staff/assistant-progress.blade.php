@@ -82,7 +82,8 @@
     <div class="px-6 py-4 border-b border-gray-200">
         <h2 class="text-sm font-semibold text-gray-700">Detail Progres per Assistant</h2>
     </div>
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[500px]">
         <thead>
             <tr class="bg-gray-50 border-b border-gray-200">
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600">Nama</th>
