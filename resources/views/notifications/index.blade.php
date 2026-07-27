@@ -125,7 +125,7 @@
 
 {{-- Pagination --}}
 @if($notifications->hasPages())
-    <div class="mt-6">
+    <div class="mt-6 bg-white rounded-xl border border-gray-200 px-6 py-3.5">
         {{ $notifications->links() }}
     </div>
 @endif

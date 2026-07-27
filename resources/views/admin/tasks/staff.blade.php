@@ -2,7 +2,7 @@
 
 @section('title', 'Tugas HR Staff')
 @section('page-title', 'Tugas HR Staff')
-@section('page-subtitle', 'Pantau tugas yang dibuat oleh HR Staff hari ini')
+@section('page-subtitle', 'Pantau seluruh tugas yang masuk ke HR Staff hari ini')
 
 @section('sidebar')
     @include('components.sidebar-admin')
