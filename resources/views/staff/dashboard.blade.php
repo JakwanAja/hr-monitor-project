@@ -12,104 +12,104 @@
     @include('components.notification-popup')
 
     {{-- ── Stat Cards ──────────────────────────────────────── --}}
-    <div class="grid grid-cols-5 gap-5 mb-8">
+    <x-responsive-grid :cols="'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5'" :gap="'gap-3 sm:gap-4 md:gap-5'">
 
         {{-- Total --}}
-        <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <x-responsive-card :padding="'p-3 sm:p-4 md:p-5'">
             <div class="flex items-center justify-between mb-3">
-                <p class="text-sm font-medium text-gray-500">Total Tugas</p>
-                <div class="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <p class="text-xs sm:text-sm font-medium text-gray-500">Total Tugas</p>
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-primary-50 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 sm:w-5 h-4 sm:h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                     </svg>
                 </div>
             </div>
-            <p class="text-3xl font-bold text-gray-800">{{ $stats['total'] }}</p>
+            <p class="text-2xl sm:text-3xl font-bold text-gray-800">{{ $stats['total'] }}</p>
             <p class="text-xs text-gray-400 mt-1">tugas hari ini</p>
-        </div>
+        </x-responsive-card>
 
         {{-- Selesai --}}
-        <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <x-responsive-card :padding="'p-3 sm:p-4 md:p-5'">
             <div class="flex items-center justify-between mb-3">
-                <p class="text-sm font-medium text-gray-500">Selesai</p>
-                <div class="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <p class="text-xs sm:text-sm font-medium text-gray-500">Selesai</p>
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 sm:w-5 h-4 sm:h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
                 </div>
             </div>
-            <p class="text-3xl font-bold text-green-600">{{ $stats['completed'] }}</p>
+            <p class="text-2xl sm:text-3xl font-bold text-green-600">{{ $stats['completed'] }}</p>
             <p class="text-xs text-gray-400 mt-1">sudah diselesaikan</p>
-        </div>
+        </x-responsive-card>
 
          {{-- Belum Selesai --}}
-         <div class="bg-white rounded-xl border border-gray-200 p-5">
+         <x-responsive-card :padding="'p-3 sm:p-4 md:p-5'">
             <div class="flex items-center justify-between mb-3">
-                <p class="text-sm font-medium text-gray-500">Belum Selesai</p>
-                <div class="w-9 h-9 rounded-lg bg-yellow-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <p class="text-xs sm:text-sm font-medium text-gray-500">Belum Selesai</p>
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-yellow-50 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 sm:w-5 h-4 sm:h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
             </div>
-            <p class="text-3xl font-bold text-yellow-600">{{ $stats['pending'] }}</p>
+            <p class="text-2xl sm:text-3xl font-bold text-yellow-600">{{ $stats['pending'] }}</p>
             <p class="text-xs text-gray-400 mt-1">masih dalam pengerjaan</p>
-        </div>
+        </x-responsive-card>
 
         {{-- Tidak Dikerjakan --}}
-        <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <x-responsive-card :padding="'p-3 sm:p-4 md:p-5'">
             <div class="flex items-center justify-between mb-3">
-                <p class="text-sm font-medium text-gray-500">Tidak Dikerjakan</p>
-                <div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <p class="text-xs sm:text-sm font-medium text-gray-500">Tidak Dikerjakan</p>
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 sm:w-5 h-4 sm:h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </div>
             </div>
-            <p class="text-3xl font-bold text-red-600">{{ $stats['not_done'] }}</p>
+            <p class="text-2xl sm:text-3xl font-bold text-red-600">{{ $stats['not_done'] }}</p>
             <p class="text-xs text-gray-400 mt-1">melewati batas waktu</p>
-        </div>
+        </x-responsive-card>
 
         {{-- Skor Minggu Ini --}}
-        <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <x-responsive-card :padding="'p-3 sm:p-4 md:p-5'">
             <div class="flex items-center justify-between mb-3">
-                <p class="text-sm font-medium text-gray-500">Skor Minggu Ini</p>
-                <div class="w-9 h-9 rounded-lg bg-yellow-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <p class="text-xs sm:text-sm font-medium text-gray-500">Skor Minggu Ini</p>
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-yellow-50 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 sm:w-5 h-4 sm:h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
                     </svg>
                 </div>
             </div>
-            <p class="text-3xl font-bold text-yellow-600">{{ $scoreWeek }}</p>
+            <p class="text-2xl sm:text-3xl font-bold text-yellow-600">{{ $scoreWeek }}</p>
             <p class="text-xs text-gray-400 mt-1">poin minggu ini</p>
-        </div>
+        </x-responsive-card>
 
         {{-- Skor Bulan Ini --}}
-        <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <x-responsive-card :padding="'p-3 sm:p-4 md:p-5'">
             <div class="flex items-center justify-between mb-3">
-                <p class="text-sm font-medium text-gray-500">Skor Bulan Ini</p>
-                <div class="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <p class="text-xs sm:text-sm font-medium text-gray-500">Skor Bulan Ini</p>
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 sm:w-5 h-4 sm:h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                     </svg>
                 </div>
             </div>
-            <p class="text-3xl font-bold text-purple-600">{{ $scoreMonth }}</p>
+            <p class="text-2xl sm:text-3xl font-bold text-purple-600">{{ $scoreMonth }}</p>
             <p class="text-xs text-gray-400 mt-1">poin bulan ini</p>
-        </div>
-    </div>
+        </x-responsive-card>
+    </x-responsive-grid>
 
-    <div class="grid grid-cols-2 gap-6">
+    <x-responsive-grid :cols="'grid-cols-1 lg:grid-cols-2'" :gap="'gap-4 md:gap-6'">
 
         {{-- ── Tugas Hari Ini ──────────────────────────────── --}}
-        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                <h2 class="text-sm font-semibold text-gray-700">Tugas Hari Ini</h2>
+        <x-responsive-card>
+            <div class="px-3 sm:px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h2 class="text-xs sm:text-sm font-semibold text-gray-700">Tugas Hari Ini</h2>
                 <a href="{{ route('staff.tasks.daily') }}"
                 class="text-xs text-primary-600 hover:text-primary-700 font-medium">
                  Lihat Semua →
@@ -122,7 +122,7 @@
                         $isDone     = $assignment?->is_completed === 'completed';
                         $isNotDone  = $assignment?->is_completed === 'not_done';
                     @endphp
-                    <div class="px-6 py-3.5 flex items-center gap-3">
+                    <div class="px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center gap-3">
                         <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0
                                     {{ $isDone ? 'border-green-500 bg-green-500' : ($isNotDone ? 'border-red-400 bg-red-400' : 'border-gray-300') }}">
                             @if($isDone)
@@ -140,7 +140,7 @@
                             @endif
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium truncate
+                            <p class="text-xs sm:text-sm font-medium truncate
                                       {{ $isDone ? 'line-through text-gray-400' : ($isNotDone ? 'text-red-400' : 'text-gray-800') }}">
                                 {{ $task->title }}
                             </p>
@@ -152,25 +152,25 @@
                             </p>
                         </div>
                         @if($isDone)
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-700 flex-shrink-0">Selesai</span>
+                            <span class="inline-flex px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs bg-green-50 text-green-700 flex-shrink-0">Selesai</span>
                         @elseif($isNotDone)
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs bg-red-50 text-red-700 flex-shrink-0">Tidak Dikerjakan</span>
+                            <span class="inline-flex px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs bg-red-50 text-red-700 flex-shrink-0">Tidak Dikerjakan</span>
                         @else
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs bg-yellow-50 text-yellow-700 flex-shrink-0">Pending</span>
+                            <span class="inline-flex px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs bg-yellow-50 text-yellow-700 flex-shrink-0">Pending</span>
                         @endif
                     </div>
                 @empty
-                    <div class="px-6 py-8 text-center text-gray-400 text-sm">
+                    <div class="px-3 sm:px-6 py-8 text-center text-gray-400 text-xs sm:text-sm">
                         Tidak ada tugas hari ini.
                     </div>
                 @endforelse
             </div>
-        </div>
+        </x-responsive-card>
 
         {{-- ── Progres HR Assistant ────────────────────────── --}}
-        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-sm font-semibold text-gray-700">Progres HR Assistant</h2>
+        <x-responsive-card>
+            <div class="px-3 sm:px-6 py-4 border-b border-gray-200">
+                <h2 class="text-xs sm:text-sm font-semibold text-gray-700">Progres HR Assistant</h2>
             </div>
             <div class="divide-y divide-gray-100">
                 @forelse($assistants as $assistant)
@@ -182,18 +182,18 @@
                             ? 'bg-green-500'
                             : ($pct >= 50 ? 'bg-primary-500' : 'bg-yellow-500');
                     @endphp
-                    <div class="px-6 py-4">
+                    <div class="px-3 sm:px-6 py-3 sm:py-4">
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex items-center gap-2">
-                                <div class="w-7 h-7 rounded-full bg-purple-100 flex items-center
+                                <div class="w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-purple-100 flex items-center
                                             justify-center flex-shrink-0">
                                     <span class="text-xs font-semibold text-purple-600">
                                         {{ strtoupper(substr($assistant->name, 0, 1)) }}
                                     </span>
                                 </div>
-                                <span class="text-sm font-medium text-gray-800">{{ $assistant->name }}</span>
+                                <span class="text-xs sm:text-sm font-medium text-gray-800">{{ $assistant->name }}</span>
                             </div>
-                            <span class="text-xs text-gray-500">
+                            <span class="text-xs text-gray-500 flex-shrink-0">
                                 {{ $assistant->completed_tasks }}/{{ $assistant->total_tasks }} tugas
                             </span>
                         </div>
@@ -204,12 +204,12 @@
                         <p class="text-xs text-gray-400 mt-1">{{ $pct }}% selesai</p>
                     </div>
                 @empty
-                    <div class="px-6 py-8 text-center text-gray-400 text-sm">
+                    <div class="px-3 sm:px-6 py-8 text-center text-gray-400 text-xs sm:text-sm">
                         Tidak ada HR Assistant.
                     </div>
                 @endforelse
             </div>
-        </div>
-    </div>
+        </x-responsive-card>
+    </x-responsive-grid>
 
 @endsection

@@ -122,162 +122,150 @@
 </div>
 
 {{-- ── MODAL TAMBAH ───────────────────────────────────── --}}
-<div id="modal-create" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-            <h3 class="text-base font-semibold text-gray-800">Tambah Default Task</h3>
-            <button onclick="document.getElementById('modal-create').classList.add('hidden')"
-                    class="text-gray-400 hover:text-gray-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-        <form action="{{ route('admin.default-tasks.store') }}" method="POST" class="px-6 py-5 space-y-4">
-            @csrf
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Judul Tugas</label>
-                <input type="text" name="title" value="{{ old('title') }}" required maxlength="150"
-                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                              focus:outline-none focus:ring-2 focus:ring-primary-500">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Deskripsi/Catataan <span class="text-gray-400 font-normal">(opsional)</span>
-                </label>
-                <textarea name="description" rows="3"
-                          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                                 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none">{{ old('description') }}</textarea>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Target Role</label>
-                <select name="target_role" required
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                               focus:outline-none focus:ring-2 focus:ring-primary-500">
-                    <option value="">-- Pilih Role --</option>
-                    <option value="hr_staff">HR Staff</option>
-                    <option value="hr_assistant">HR Assistant</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select name="is_active"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                               focus:outline-none focus:ring-2 focus:ring-primary-500">
-                    <option value="1">Aktif</option>
-                    <option value="0">Nonaktif</option>
-                </select>
-            </div>
-            <div class="flex justify-end gap-3 pt-2">
-                <button type="button"
-                        onclick="document.getElementById('modal-create').classList.add('hidden')"
-                        class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium">
-                    Batal
-                </button>
-                <button type="submit"
-                        class="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition">
-                    Simpan
-                </button>
-            </div>
-        </form>
+<x-responsive-modal id="modal-create">
+    <div class="flex items-center justify-between px-3 sm:px-6 py-4 border-b border-gray-200">
+        <h3 class="text-base font-semibold text-gray-800">Tambah Default Task</h3>
+        <button onclick="document.getElementById('modal-create').classList.add('hidden')"
+                class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
     </div>
-</div>
+    <form action="{{ route('admin.default-tasks.store') }}" method="POST" class="px-3 sm:px-6 py-5 space-y-4 overflow-y-auto flex-1">
+        @csrf
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Judul Tugas</label>
+            <input type="text" name="title" value="{{ old('title') }}" required maxlength="150"
+                   class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                          focus:outline-none focus:ring-2 focus:ring-primary-500">
+        </div>
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                Deskripsi/Catatan <span class="text-gray-400 font-normal">(opsional)</span>
+            </label>
+            <textarea name="description" rows="3"
+                      class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                             focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none">{{ old('description') }}</textarea>
+        </div>
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Target Role</label>
+            <select name="target_role" required
+                    class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                           focus:outline-none focus:ring-2 focus:ring-primary-500">
+                <option value="">-- Pilih Role --</option>
+                <option value="hr_staff">HR Staff</option>
+                <option value="hr_assistant">HR Assistant</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select name="is_active"
+                    class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                           focus:outline-none focus:ring-2 focus:ring-primary-500">
+                <option value="1">Aktif</option>
+                <option value="0">Nonaktif</option>
+            </select>
+        </div>
+        <div class="flex justify-end gap-2 sm:gap-3 pt-2">
+            <x-responsive-button variant="secondary" size="sm" type="button"
+                    onclick="document.getElementById('modal-create').classList.add('hidden')">
+                Batal
+            </x-responsive-button>
+            <x-responsive-button variant="primary" size="sm" type="submit">
+                Simpan
+            </x-responsive-button>
+        </div>
+    </form>
+</x-responsive-modal>
 
 {{-- ── MODAL EDIT ─────────────────────────────────────── --}}
-<div id="modal-edit" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-            <h3 class="text-base font-semibold text-gray-800">Edit Default Task</h3>
-            <button onclick="document.getElementById('modal-edit').classList.add('hidden')"
-                    class="text-gray-400 hover:text-gray-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
+<x-responsive-modal id="modal-edit">
+    <div class="flex items-center justify-between px-3 sm:px-6 py-4 border-b border-gray-200">
+        <h3 class="text-base font-semibold text-gray-800">Edit Default Task</h3>
+        <button onclick="document.getElementById('modal-edit').classList.add('hidden')"
+                class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+    <form id="form-edit" action="" method="POST" class="px-3 sm:px-6 py-5 space-y-4 overflow-y-auto flex-1">
+        @csrf
+        @method('PATCH')
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Judul Tugas</label>
+            <input type="text" id="edit-title" name="title" required maxlength="150"
+                   class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                          focus:outline-none focus:ring-2 focus:ring-primary-500">
         </div>
-        <form id="form-edit" action="" method="POST" class="px-6 py-5 space-y-4">
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                Deskripsi/Catatan <span class="text-gray-400 font-normal">(opsional)</span>
+            </label>
+            <textarea id="edit-description" name="description" rows="3"
+                      class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                             focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"></textarea>
+        </div>
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Target Role</label>
+            <select id="edit-target-role" name="target_role" required
+                    class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                           focus:outline-none focus:ring-2 focus:ring-primary-500">
+                <option value="hr_staff">HR Staff</option>
+                <option value="hr_assistant">HR Assistant</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select id="edit-is-active" name="is_active"
+                    class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                           focus:outline-none focus:ring-2 focus:ring-primary-500">
+                <option value="1">Aktif</option>
+                <option value="0">Nonaktif</option>
+            </select>
+        </div>
+        <div class="flex justify-end gap-2 sm:gap-3 pt-2">
+            <x-responsive-button variant="secondary" size="sm" type="button"
+                    onclick="document.getElementById('modal-edit').classList.add('hidden')">
+                Batal
+            </x-responsive-button>
+            <x-responsive-button variant="primary" size="sm" type="submit">
+                Simpan Perubahan
+            </x-responsive-button>
+        </div>
+    </form>
+</x-responsive-modal>
+
+{{-- ── MODAL HAPUS ─────────────────────────────────────── --}}
+<x-responsive-modal id="modal-delete" class="max-w-sm">
+    <div class="px-3 sm:px-6 py-5 text-center">
+        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+        </div>
+        <h3 class="text-base font-semibold text-gray-800 mb-1">Hapus Default Task</h3>
+        <p class="text-xs sm:text-sm text-gray-500 mb-6">
+            Yakin ingin menghapus <span id="delete-task-title" class="font-semibold text-gray-700"></span>?
+            Tindakan ini tidak dapat dibatalkan.
+        </p>
+        <form id="form-delete" action="" method="POST">
             @csrf
-            @method('PATCH')
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Judul Tugas</label>
-                <input type="text" id="edit-title" name="title" required maxlength="150"
-                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                              focus:outline-none focus:ring-2 focus:ring-primary-500">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Deskripsi/Catatan <span class="text-gray-400 font-normal">(opsional)</span>
-                </label>
-                <textarea id="edit-description" name="description" rows="3"
-                          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                                 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"></textarea>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Target Role</label>
-                <select id="edit-target-role" name="target_role" required
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                               focus:outline-none focus:ring-2 focus:ring-primary-500">
-                    <option value="hr_staff">HR Staff</option>
-                    <option value="hr_assistant">HR Assistant</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select id="edit-is-active" name="is_active"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                               focus:outline-none focus:ring-2 focus:ring-primary-500">
-                    <option value="1">Aktif</option>
-                    <option value="0">Nonaktif</option>
-                </select>
-            </div>
-            <div class="flex justify-end gap-3 pt-2">
-                <button type="button"
-                        onclick="document.getElementById('modal-edit').classList.add('hidden')"
-                        class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium">
+            @method('DELETE')
+            <div class="flex justify-center gap-2 sm:gap-3">
+                <x-responsive-button variant="secondary" size="sm" type="button"
+                        onclick="document.getElementById('modal-delete').classList.add('hidden')">
                     Batal
-                </button>
-                <button type="submit"
-                        class="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition">
-                    Simpan Perubahan
-                </button>
+                </x-responsive-button>
+                <x-responsive-button variant="danger" size="sm" type="submit">
+                    Ya, Hapus
+                </x-responsive-button>
             </div>
         </form>
     </div>
-</div>
-
-{{-- ── MODAL HAPUS ─────────────────────────────────────── --}}
-<div id="modal-delete" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4">
-        <div class="px-6 py-5 text-center">
-            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                </svg>
-            </div>
-            <h3 class="text-base font-semibold text-gray-800 mb-1">Hapus Default Task</h3>
-            <p class="text-sm text-gray-500 mb-6">
-                Yakin ingin menghapus <span id="delete-task-title" class="font-semibold text-gray-700"></span>?
-                Tindakan ini tidak dapat dibatalkan.
-            </p>
-            <form id="form-delete" action="" method="POST">
-                @csrf
-                @method('DELETE')
-                <div class="flex justify-center gap-3">
-                    <button type="button"
-                            onclick="document.getElementById('modal-delete').classList.add('hidden')"
-                            class="px-5 py-2 text-sm text-gray-600 font-medium border border-gray-300 rounded-lg">
-                        Batal
-                    </button>
-                    <button type="submit"
-                            class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition">
-                        Ya, Hapus
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+</x-responsive-modal>
 
 {{-- ── JavaScript ──────────────────────────────────────── --}}
 <script>

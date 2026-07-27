@@ -167,177 +167,157 @@
 </div>
 
 {{-- ── MODAL TAMBAH ───────────────────────────────────── --}}
-<div id="modal-create" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-            <h3 class="text-base font-semibold text-gray-800">Tambah Tugas Mandiri</h3>
-            <button onclick="document.getElementById('modal-create').classList.add('hidden')"
-                    class="text-gray-400 hover:text-gray-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-        <form action="{{ route('assistant.tasks.store') }}" method="POST" class="px-6 py-5 space-y-4">
-            @csrf
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Judul Tugas</label>
-                <input type="text" name="title" value="{{ old('title') }}" required maxlength="200"
-                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                              focus:outline-none focus:ring-2 focus:ring-primary-500">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Deskripsi <span class="text-gray-400 font-normal">(opsional)</span>
-                </label>
-                <textarea name="description" rows="3"
-                          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                                 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none">{{ old('description') }}</textarea>
-            </div>
-            <div class="flex justify-end gap-3 pt-2">
-                <button type="button"
-                        onclick="document.getElementById('modal-create').classList.add('hidden')"
-                        class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium">
-                    Batal
-                </button>
-                <button type="submit"
-                        class="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm
-                               font-medium rounded-lg transition">
-                    Simpan
-                </button>
-            </div>
-        </form>
+<x-responsive-modal id="modal-create">
+    <div class="flex items-center justify-between px-3 sm:px-6 py-4 border-b border-gray-200">
+        <h3 class="text-base font-semibold text-gray-800">Tambah Tugas Mandiri</h3>
+        <button onclick="document.getElementById('modal-create').classList.add('hidden')"
+                class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
     </div>
-</div>
+    <form action="{{ route('assistant.tasks.store') }}" method="POST" class="px-3 sm:px-6 py-5 space-y-4">
+        @csrf
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Judul Tugas</label>
+            <input type="text" name="title" value="{{ old('title') }}" required maxlength="200"
+                   class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                          focus:outline-none focus:ring-2 focus:ring-primary-500">
+        </div>
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                Deskripsi <span class="text-gray-400 font-normal">(opsional)</span>
+            </label>
+            <textarea name="description" rows="3"
+                      class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                             focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none">{{ old('description') }}</textarea>
+        </div>
+        <div class="flex justify-end gap-2 sm:gap-3 pt-2">
+            <x-responsive-button variant="secondary" size="sm" type="button"
+                    onclick="document.getElementById('modal-create').classList.add('hidden')">
+                Batal
+            </x-responsive-button>
+            <x-responsive-button variant="primary" size="sm" type="submit">
+                Simpan
+            </x-responsive-button>
+        </div>
+    </form>
+</x-responsive-modal>
 
 {{-- ── MODAL EDIT ─────────────────────────────────────── --}}
-<div id="modal-edit" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-            <h3 class="text-base font-semibold text-gray-800">Edit Tugas Mandiri</h3>
-            <button onclick="document.getElementById('modal-edit').classList.add('hidden')"
-                    class="text-gray-400 hover:text-gray-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-        <form id="form-edit" action="" method="POST" class="px-6 py-5 space-y-4">
-            @csrf
-            @method('PATCH')
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Judul Tugas</label>
-                <input type="text" id="edit-title" name="title" required maxlength="200"
-                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                              focus:outline-none focus:ring-2 focus:ring-primary-500">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Deskripsi <span class="text-gray-400 font-normal">(opsional)</span>
-                </label>
-                <textarea id="edit-description" name="description" rows="3"
-                          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                                 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"></textarea>
-            </div>
-            <div class="flex justify-end gap-3 pt-2">
-                <button type="button"
-                        onclick="document.getElementById('modal-edit').classList.add('hidden')"
-                        class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium">
-                    Batal
-                </button>
-                <button type="submit"
-                        class="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm
-                               font-medium rounded-lg transition">
-                    Simpan Perubahan
-                </button>
-            </div>
-        </form>
+<x-responsive-modal id="modal-edit">
+    <div class="flex items-center justify-between px-3 sm:px-6 py-4 border-b border-gray-200">
+        <h3 class="text-base font-semibold text-gray-800">Edit Tugas Mandiri</h3>
+        <button onclick="document.getElementById('modal-edit').classList.add('hidden')"
+                class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
     </div>
-</div>
+    <form id="form-edit" action="" method="POST" class="px-3 sm:px-6 py-5 space-y-4">
+        @csrf
+        @method('PATCH')
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Judul Tugas</label>
+            <input type="text" id="edit-title" name="title" required maxlength="200"
+                   class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                          focus:outline-none focus:ring-2 focus:ring-primary-500">
+        </div>
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                Deskripsi <span class="text-gray-400 font-normal">(opsional)</span>
+            </label>
+            <textarea id="edit-description" name="description" rows="3"
+                      class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                             focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 sm:gap-3 pt-2">
+            <x-responsive-button variant="secondary" size="sm" type="button"
+                    onclick="document.getElementById('modal-edit').classList.add('hidden')">
+                Batal
+            </x-responsive-button>
+            <x-responsive-button variant="primary" size="sm" type="submit">
+                Simpan Perubahan
+            </x-responsive-button>
+        </div>
+    </form>
+</x-responsive-modal>
 
 {{-- ── MODAL HAPUS ─────────────────────────────────────── --}}
-<div id="modal-delete" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4">
-        <div class="px-6 py-5 text-center">
-            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                </svg>
-            </div>
-            <h3 class="text-base font-semibold text-gray-800 mb-1">Hapus Tugas Mandiri</h3>
-            <p class="text-sm text-gray-500 mb-6">
-                Yakin ingin menghapus
-                <span id="delete-task-title" class="font-semibold text-gray-700"></span>?
-            </p>
-            <form id="form-delete" action="" method="POST">
-                @csrf
-                @method('DELETE')
-                <div class="flex justify-center gap-3">
-                    <button type="button"
-                            onclick="document.getElementById('modal-delete').classList.add('hidden')"
-                            class="px-5 py-2 text-sm text-gray-600 font-medium border border-gray-300 rounded-lg">
-                        Batal
-                    </button>
-                    <button type="submit"
-                            class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white text-sm
-                                   font-medium rounded-lg transition">
-                        Ya, Hapus
-                    </button>
-                </div>
-            </form>
+<x-responsive-modal id="modal-delete" class="max-w-sm">
+    <div class="px-3 sm:px-6 py-5 text-center">
+        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
         </div>
-    </div>
-</div>
-
-{{-- ── MODAL CHECKLIST SELESAI ────────────────────────── --}}
-<div id="modal-complete" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-            <div>
-                <h3 class="text-base font-semibold text-gray-800">Tandai Selesai</h3>
-                <p id="complete-task-title" class="text-xs text-gray-500 mt-0.5"></p>
-            </div>
-            <button onclick="document.getElementById('modal-complete').classList.add('hidden')"
-                    class="text-gray-400 hover:text-gray-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-        <form id="form-complete" action="" method="POST" class="px-6 py-5 space-y-4">
+        <h3 class="text-base font-semibold text-gray-800 mb-1">Hapus Tugas Mandiri</h3>
+        <p class="text-xs sm:text-sm text-gray-500 mb-6">
+            Yakin ingin menghapus
+            <span id="delete-task-title" class="font-semibold text-gray-700"></span>?
+        </p>
+        <form id="form-delete" action="" method="POST">
             @csrf
-            @method('PATCH')
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Catatan Penyelesaian
-                    <span class="text-gray-400 font-normal">(opsional)</span>
-                </label>
-                <textarea name="note" rows="4" placeholder="Tuliskan laporan singkat atau catatan penyelesaian tugas ini..."
-                          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                                 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"></textarea>
-                <p class="mt-1 text-xs text-gray-400">
-                    Setelah ditandai selesai, tugas tidak dapat diubah kembali.
-                </p>
-            </div>
-            <div class="flex justify-end gap-3 pt-2">
-                <button type="button"
-                        onclick="document.getElementById('modal-complete').classList.add('hidden')"
-                        class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium">
+            @method('DELETE')
+            <div class="flex justify-center gap-2 sm:gap-3">
+                <x-responsive-button variant="secondary" size="sm" type="button"
+                        onclick="document.getElementById('modal-delete').classList.add('hidden')">
                     Batal
-                </button>
-                <button type="submit"
-                        class="flex items-center gap-2 px-5 py-2 bg-green-600 hover:bg-green-700
-                               text-white text-sm font-medium rounded-lg transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Selesai
-                </button>
+                </x-responsive-button>
+                <x-responsive-button variant="danger" size="sm" type="submit">
+                    Ya, Hapus
+                </x-responsive-button>
             </div>
         </form>
     </div>
-</div>
+</x-responsive-modal>
+
+{{-- ── MODAL CHECKLIST SELESAI ────────────────────────── --}}
+<x-responsive-modal id="modal-complete">
+    <div class="flex items-center justify-between px-3 sm:px-6 py-4 border-b border-gray-200">
+        <div>
+            <h3 class="text-base font-semibold text-gray-800">Tandai Selesai</h3>
+            <p id="complete-task-title" class="text-xs text-gray-500 mt-0.5"></p>
+        </div>
+        <button onclick="document.getElementById('modal-complete').classList.add('hidden')"
+                class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+    <form id="form-complete" action="" method="POST" class="px-3 sm:px-6 py-5 space-y-4">
+        @csrf
+        @method('PATCH')
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                Catatan Penyelesaian
+                <span class="text-gray-400 font-normal">(opsional)</span>
+            </label>
+            <textarea name="note" rows="4" placeholder="Tuliskan laporan singkat atau catatan penyelesaian tugas ini..."
+                      class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                             focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"></textarea>
+            <p class="mt-1 text-xs text-gray-400">
+                Setelah ditandai selesai, tugas tidak dapat diubah kembali.
+            </p>
+        </div>
+        <div class="flex justify-end gap-2 sm:gap-3 pt-2">
+            <x-responsive-button variant="secondary" size="sm" type="button"
+                    onclick="document.getElementById('modal-complete').classList.add('hidden')">
+                Batal
+            </x-responsive-button>
+            <x-responsive-button variant="success" size="sm" type="submit">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Selesai
+            </x-responsive-button>
+        </div>
+    </form>
+</x-responsive-modal>
 
 <script>
     function openEditModal(id, title, description) {

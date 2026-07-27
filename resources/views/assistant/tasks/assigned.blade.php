@@ -126,54 +126,49 @@
 </div>
 
 {{-- Modal Checklist --}}
-<div id="modal-complete" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-            <div>
-                <h3 class="text-base font-semibold text-gray-800">Tandai Selesai</h3>
-                <p id="complete-task-title" class="text-xs text-gray-500 mt-0.5"></p>
-            </div>
-            <button onclick="document.getElementById('modal-complete').classList.add('hidden')"
-                    class="text-gray-400 hover:text-gray-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
+<x-responsive-modal id="modal-complete">
+    <div class="flex items-center justify-between px-3 sm:px-6 py-4 border-b border-gray-200">
+        <div>
+            <h3 class="text-base font-semibold text-gray-800">Tandai Selesai</h3>
+            <p id="complete-task-title" class="text-xs text-gray-500 mt-0.5"></p>
         </div>
-        <form id="form-complete" action="" method="POST" class="px-6 py-5 space-y-4">
-            @csrf
-            @method('PATCH')
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Catatan Penyelesaian
-                    <span class="text-gray-400 font-normal">(opsional)</span>
-                </label>
-                <textarea name="note" rows="4"
-                          placeholder="Tuliskan laporan singkat atau catatan penyelesaian tugas ini..."
-                          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                                 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"></textarea>
-                <p class="mt-1 text-xs text-gray-400">
-                    Setelah ditandai selesai, tugas tidak dapat diubah kembali.
-                </p>
-            </div>
-            <div class="flex justify-end gap-3 pt-2">
-                <button type="button"
-                        onclick="document.getElementById('modal-complete').classList.add('hidden')"
-                        class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium">
-                    Batal
-                </button>
-                <button type="submit"
-                        class="flex items-center gap-2 px-5 py-2 bg-green-600 hover:bg-green-700
-                               text-white text-sm font-medium rounded-lg transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Selesai
-                </button>
-            </div>
-        </form>
+        <button onclick="document.getElementById('modal-complete').classList.add('hidden')"
+                class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
     </div>
-</div>
+    <form id="form-complete" action="" method="POST" class="px-3 sm:px-6 py-5 space-y-4">
+        @csrf
+        @method('PATCH')
+        <div>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                Catatan Penyelesaian
+                <span class="text-gray-400 font-normal">(opsional)</span>
+            </label>
+            <textarea name="note" rows="4"
+                      placeholder="Tuliskan laporan singkat atau catatan penyelesaian tugas ini..."
+                      class="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm
+                             focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"></textarea>
+            <p class="mt-1 text-xs text-gray-400">
+                Setelah ditandai selesai, tugas tidak dapat diubah kembali.
+            </p>
+        </div>
+        <div class="flex justify-end gap-2 sm:gap-3 pt-2">
+            <x-responsive-button variant="secondary" size="sm" type="button"
+                    onclick="document.getElementById('modal-complete').classList.add('hidden')">
+                Batal
+            </x-responsive-button>
+            <x-responsive-button variant="success" size="sm" type="submit">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Selesai
+            </x-responsive-button>
+        </div>
+    </form>
+</x-responsive-modal>
 
 <script>
     function openCompleteModal(id, title) {

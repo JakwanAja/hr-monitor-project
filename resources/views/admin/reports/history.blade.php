@@ -55,16 +55,17 @@
 
 {{-- Tabel --}}
 <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-xs sm:text-sm min-w-full">
         <thead>
             <tr class="bg-gray-50 border-b border-gray-200">
-                <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-28">Tanggal</th>
-                <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-44">Judul</th>
-                <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-36">Penerima</th>
-                <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-28">Sumber</th>
-                <th class="text-left px-6 py-3.5 font-semibold text-gray-600">Catatan</th>
-                <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-28">Status</th>
-                <th class="text-right px-6 py-3.5 font-semibold text-gray-600 w-28">Aksi</th>
+                <th class="text-left px-3 sm:px-6 py-2.5 sm:py-3.5 font-semibold text-gray-600 w-20 sm:w-28">Tanggal</th>
+                <th class="text-left px-3 sm:px-6 py-2.5 sm:py-3.5 font-semibold text-gray-600 w-28 sm:w-44">Judul</th>
+                <th class="text-left px-3 sm:px-6 py-2.5 sm:py-3.5 font-semibold text-gray-600 w-24 sm:w-36">Penerima</th>
+                <th class="text-left px-3 sm:px-6 py-2.5 sm:py-3.5 font-semibold text-gray-600 w-20 sm:w-28">Sumber</th>
+                <th class="text-left px-3 sm:px-6 py-2.5 sm:py-3.5 font-semibold text-gray-600 hidden sm:table-cell">Catatan</th>
+                <th class="text-left px-3 sm:px-6 py-2.5 sm:py-3.5 font-semibold text-gray-600 w-20 sm:w-28">Status</th>
+                <th class="text-right px-3 sm:px-6 py-2.5 sm:py-3.5 font-semibold text-gray-600 w-16 sm:w-28">Aksi</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
@@ -77,43 +78,43 @@
                     <tr class="hover:bg-gray-50 transition">
 
                         {{-- Tanggal --}}
-                        <td class="px-6 py-4 text-gray-500 text-xs">
+                        <td class="px-3 sm:px-6 py-3 sm:py-4 text-gray-500 text-xs">
                             {{ $task->task_date->translatedFormat('d M Y') }}
                         </td>
 
                         {{-- Judul --}}
-                        <td class="px-6 py-4 w-44">
-                            <div class="truncate max-w-[160px] font-medium text-gray-800"
+                        <td class="px-3 sm:px-6 py-3 sm:py-4 w-28 sm:w-44">
+                            <div class="truncate max-w-[80px] sm:max-w-[160px] font-medium text-gray-800 text-xs sm:text-sm"
                                  title="{{ $task->title }}">
                                 {{ $task->title }}
                             </div>
                         </td>
 
                         {{-- Penerima --}}
-                        <td class="px-6 py-4 w-36">
-                            <div class="truncate max-w-[120px] text-gray-700 text-xs font-medium"
+                        <td class="px-3 sm:px-6 py-3 sm:py-4 w-24 sm:w-36">
+                            <div class="truncate max-w-[70px] sm:max-w-[120px] text-gray-700 text-xs font-medium"
                                  title="{{ $assignee->name }}">
                                 {{ $assignee->name }}
                             </div>
-                            <p class="text-xs text-gray-400">
+                            <p class="text-xs text-gray-400 hidden sm:block">
                                 {{ $assignee->role === 'hr_staff' ? 'HR Staff' : 'HR Assistant' }}
                             </p>
                         </td>
 
                         {{-- Sumber --}}
-                        <td class="px-6 py-4 w-28">
+                        <td class="px-3 sm:px-6 py-3 sm:py-4 w-20 sm:w-28">
                             @if($task->type === 'self')
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full
+                                <span class="inline-flex items-center px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full
                                              text-xs font-medium bg-gray-100 text-gray-600">
                                     Mandiri
                                 </span>
                             @elseif($task->type === 'assigned')
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full
+                                <span class="inline-flex items-center px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full
                                              text-xs font-medium bg-blue-50 text-blue-700">
                                     {{ $task->creator?->name ?? 'Admin' }}
                                 </span>
                             @elseif($task->type === 'default')
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full
+                                <span class="inline-flex items-center px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full
                                              text-xs font-medium bg-purple-50 text-purple-700">
                                     Rutin
                                 </span>
@@ -121,21 +122,21 @@
                         </td>
 
                         {{-- Catatan --}}
-                        <td class="px-6 py-4">
-                            <div class="truncate max-w-[180px] text-gray-500 text-xs"
+                        <td class="px-3 sm:px-6 py-3 sm:py-4 hidden sm:table-cell">
+                            <div class="truncate max-w-[100px] sm:max-w-[180px] text-gray-500 text-xs"
                                  title="{{ $assignment?->note ?? '-' }}">
                                 {{ $assignment?->note ?? '-' }}
                             </div>
                         </td>
 
                         {{-- Status --}}
-                        <td class="px-6 py-4 w-28">
+                        <td class="px-3 sm:px-6 py-3 sm:py-4 w-20 sm:w-28">
                             <x-task-status-badge :status="$status" :completedAt="$assignment?->completed_at" />
                         </td>
 
                         {{-- Aksi --}}
-                        <td class="px-6 py-4 w-28">
-                            <div class="flex items-center justify-end gap-1.5">
+                        <td class="px-3 sm:px-6 py-3 sm:py-4 w-16 sm:w-28">
+                            <div class="flex items-center justify-end gap-0.5 sm:gap-1.5">
 
                                 {{-- Tombol Detail --}}
                                 <button
@@ -153,9 +154,9 @@
                                             'status' => $task->assignments->firstWhere('user_id', $u->id)?->is_completed ?? 'pending',
                                         ])) }}
                                     })"
-                                    class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
+                                    class="p-1 sm:p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
                                     title="Lihat Detail">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                               d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -168,9 +169,9 @@
                                     @if($status !== 'completed')
                                         <button
                                             onclick="openCompleteModal({{ $assignment->id }}, '{{ addslashes($task->title) }}', '{{ addslashes($assignee->name) }}')"
-                                            class="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition"
+                                            class="p-1 sm:p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition"
                                             title="Tandai Selesai">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                       d="M5 13l4 4L19 7"/>
                                             </svg>
@@ -180,9 +181,9 @@
                                     {{-- Tombol Hapus Riwayat --}}
                                     <button
                                         onclick="openDeleteModal({{ $assignment->id }}, '{{ addslashes($task->title) }}', '{{ addslashes($assignee->name) }}')"
-                                        class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                                        class="p-1 sm:p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
                                         title="Hapus Riwayat">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                   d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
@@ -194,7 +195,7 @@
                 @endforeach
             @empty
                 <tr>
-                    <td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">
+                    <td colspan="7" class="px-3 sm:px-6 py-12 text-center text-gray-400 text-sm">
                         {{ $date || $userId ? 'Tidak ada data sesuai filter.' : 'Belum ada riwayat tugas.' }}
                     </td>
                 </tr>

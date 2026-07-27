@@ -38,35 +38,35 @@
     @foreach($report as $item)
         <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
             {{-- Header User --}}
-            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+            <div class="px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center">
-                        <span class="text-sm font-semibold text-primary-600">
+                    <div class="w-8 sm:w-9 h-8 sm:h-9 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+                        <span class="text-xs sm:text-sm font-semibold text-primary-600">
                             {{ strtoupper(substr($item['user']->name, 0, 1)) }}
                         </span>
                     </div>
                     <div>
-                        <p class="text-sm font-semibold text-gray-800">{{ $item['user']->name }}</p>
+                        <p class="text-xs sm:text-sm font-semibold text-gray-800">{{ $item['user']->name }}</p>
                         <p class="text-xs text-gray-400">
                             {{ $item['user']->role === 'hr_staff' ? 'HR Staff' : 'HR Assistant' }}
                         </p>
                     </div>
                 </div>
-                <div class="flex items-center gap-6">
+                <div class="flex items-center gap-3 sm:gap-6 w-full sm:w-auto">
                     <div class="text-center">
-                        <p class="text-lg font-bold text-gray-800">{{ $item['total'] }}</p>
+                        <p class="text-base sm:text-lg font-bold text-gray-800">{{ $item['total'] }}</p>
                         <p class="text-xs text-gray-400">Total</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-lg font-bold text-green-600">{{ $item['completed'] }}</p>
+                        <p class="text-base sm:text-lg font-bold text-green-600">{{ $item['completed'] }}</p>
                         <p class="text-xs text-gray-400">Selesai</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-lg font-bold text-yellow-600">{{ $item['pending'] }}</p>
+                        <p class="text-base sm:text-lg font-bold text-yellow-600">{{ $item['pending'] }}</p>
                         <p class="text-xs text-gray-400">Pending</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-lg font-bold text-red-500">{{ $item['not_done'] }}</p>
+                        <p class="text-base sm:text-lg font-bold text-red-500">{{ $item['not_done'] }}</p>
                         <p class="text-xs text-gray-400">Tdk Dikerjakan</p>
                     </div>
                     @php
@@ -75,7 +75,7 @@
                             : 0;
                     @endphp
                     <div class="text-center">
-                        <p class="text-lg font-bold
+                        <p class="text-base sm:text-lg font-bold
                             {{ $pct === 100 ? 'text-green-600' : ($pct >= 50 ? 'text-primary-600' : 'text-yellow-600') }}">
                             {{ $pct }}%
                         </p>
@@ -92,7 +92,7 @@
                             $taskDone    = $assignment->is_completed === 'completed';
                             $taskNotDone = $assignment->is_completed === 'not_done';
                         @endphp
-                        <div class="px-6 py-3 flex items-center gap-3">
+                        <div class="px-3 sm:px-6 py-2 sm:py-3 flex items-center gap-2 sm:gap-3">
                             <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0
                                         {{ $taskDone ? 'border-green-500 bg-green-500' : ($taskNotDone ? 'border-red-400 bg-red-400' : 'border-gray-300') }}">
                                 @if($taskDone)
@@ -109,7 +109,7 @@
                                     </svg>
                                 @endif
                             </div>
-                            <p class="text-sm flex-1
+                            <p class="text-xs sm:text-sm flex-1
                                       {{ $taskDone ? 'line-through text-gray-400' : ($taskNotDone ? 'text-red-400' : 'text-gray-700') }}">
                                 {{ $assignment->task?->title ?? '-' }}
                             </p>
@@ -118,7 +118,7 @@
                     @endforeach
                 </div>
             @else
-                <div class="px-6 py-4 text-sm text-gray-400 text-center">
+                <div class="px-3 sm:px-6 py-4 text-xs sm:text-sm text-gray-400 text-center">
                     Tidak ada tugas pada tanggal ini.
                 </div>
             @endif
