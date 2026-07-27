@@ -54,6 +54,43 @@ class UserService
         ]);
     }
 
+    /**
+     * Update data pengguna oleh Admin, termasuk foto profil.
+     */
+    public function updateUserWithPhoto(User $user, array $data, $imageFile = null): bool
+    {
+        if ($this->userRepository->isEmailTaken($data['email'], $user->id)) {
+            throw ValidationException::withMessages([
+                'email' => 'Email sudah digunakan oleh pengguna lain.',
+            ]);
+        }
+
+        $payload = [
+            'name'      => $data['name'],
+            'email'     => $data['email'],
+            'role'      => $data['role'],
+            'is_active' => $data['is_active'] ?? $user->is_active,
+        ];
+
+        // Upload foto baru
+        if ($imageFile) {
+            if ($user->image && Storage::disk('public')->exists($user->image)) {
+                Storage::disk('public')->delete($user->image);
+            }
+            $payload['image'] = $imageFile->store('profile-photos', 'public');
+        }
+
+        // Hapus foto
+        if (isset($data['remove_image']) && $data['remove_image'] === '1') {
+            if ($user->image && Storage::disk('public')->exists($user->image)) {
+                Storage::disk('public')->delete($user->image);
+            }
+            $payload['image'] = null;
+        }
+
+        return $this->userRepository->update($user, $payload);
+    }
+
     public function updatePassword(User $user, string $newPassword): bool
     {
         return $this->userRepository->updatePassword(
