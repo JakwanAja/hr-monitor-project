@@ -126,6 +126,27 @@ class TaskController extends Controller
         }
     }
 
+    public function allIndex()
+    {
+        $tasks = $this->taskService->getAllTasksForUserToday(Auth::id());
+        return view('assistant.tasks.all', compact('tasks'));
+    }
+
+    public function allComplete(Request $request, Task $task)
+    {
+        $request->validate([
+            'note' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        try {
+            $this->taskService->completeTask($task, $request->note);
+            return redirect()->route('assistant.tasks.all')
+                ->with('task_completed', 'Terima kasih sudah menyelesaikan tugas ini dengan baik. Tetap semangat!');
+        } catch (ValidationException $e) {
+            return back()->with('error', $e->errors()['task'][0] ?? 'Gagal menyelesaikan tugas.');
+        }
+    }
+
     public function history(Request $request)
     {
         $date  = $request->query('date');

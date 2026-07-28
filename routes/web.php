@@ -55,6 +55,8 @@ Route::prefix('staff')->name('staff.')->middleware(['auth', 'role:hr_staff'])->g
     Route::patch('/tasks/daily/{task}/complete', [StaffTaskController::class, 'dailyComplete'])->name('tasks.daily.complete');
     Route::get('/tasks/assigned', [StaffTaskController::class, 'assignedIndex'])->name('tasks.assigned');
     Route::patch('/tasks/assigned/{task}/complete', [StaffTaskController::class, 'assignedComplete'])->name('tasks.assigned.complete');
+    Route::get('/tasks/all', [StaffTaskController::class, 'allIndex'])->name('tasks.all');
+    Route::patch('/tasks/all/{task}/complete', [StaffTaskController::class, 'allComplete'])->name('tasks.all.complete');
     Route::get('/history', [StaffTaskController::class, 'history'])->name('tasks.history');
     Route::get('/assign-tasks', [StaffTaskController::class, 'assignIndex'])->name('assign.index');
     Route::post('/assign-tasks', [StaffTaskController::class, 'assignStore'])->name('assign.store');
@@ -70,6 +72,8 @@ Route::prefix('assistant')->name('assistant.')->middleware(['auth', 'role:hr_ass
     Route::patch('/tasks/routine/{task}/complete', [AssistantTaskController::class, 'routineComplete'])->name('tasks.routine.complete');
     Route::get('/tasks/assigned', [AssistantTaskController::class, 'assignedIndex'])->name('tasks.assigned');
     Route::patch('/tasks/assigned/{task}/complete', [AssistantTaskController::class, 'assignedComplete'])->name('tasks.assigned.complete');
+    Route::get('/tasks/all', [AssistantTaskController::class, 'allIndex'])->name('tasks.all');
+    Route::patch('/tasks/all/{task}/complete', [AssistantTaskController::class, 'allComplete'])->name('tasks.all.complete');
     Route::resource('tasks', AssistantTaskController::class) ->only(['index', 'store']);
     Route::patch('/tasks/{task}', [AssistantTaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{task}', [AssistantTaskController::class, 'destroy'])->name('tasks.destroy');

@@ -1,4 +1,4 @@
-{{-- Profil Saya --}}
+{{-- Profil Saya 
 <a href="{{ route('profile.show') }}"
    class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all
           {{ request()->routeIs('profile.*') ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
@@ -7,7 +7,7 @@
               d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
     </svg>
     Profil Saya
-</a>
+</a> --}}
 
 {{-- Separator --}}
 <div class="my-2 border-t border-white/10"></div>
@@ -44,6 +44,17 @@
 
     <div x-show="open" x-transition class="mt-1 ml-4 pl-4 border-l border-white/10 space-y-1">
 
+        {{-- Semua Tugas --}}
+        <a href="{{ route('staff.tasks.all') }}"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all
+                  {{ request()->routeIs('staff.tasks.all') ? 'text-white bg-white/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+            </svg>
+            Semua Tugas
+        </a>
+ 
         {{-- Tugas Harian --}}
         <a href="{{ route('staff.tasks.daily') }}"
            class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all
