@@ -23,6 +23,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // ── ADMIN ────────────────────────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+    Route::get('/team-progress/{user}', [AdminDashboard::class, 'teamProgressDetail'])->name('dashboard.team-progress-detail');
     Route::resource('users', UserController::class)
         ->only(['index', 'store', 'update', 'destroy']);
     Route::patch('/users/{user}/password', [UserController::class, 'updatePassword'])->name('users.password');
