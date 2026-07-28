@@ -214,4 +214,16 @@ class TaskController extends Controller
         }
         return view('staff.assistant-progress', compact('assistants', 'scoreData'));
     }
+
+    public function assistantProgressDetail(\App\Models\User $user)
+    {
+        // Pastikan yang dibuka adalah HR Assistant
+        abort_if($user->role !== 'hr_assistant', 403);
+
+        $tasks = $this->taskService->getAllTasksForUserToday($user->id);
+        $scoreWeek  = $this->taskService->getUserScore($user->id, 'week');
+        $scoreMonth = $this->taskService->getUserScore($user->id, 'month');
+
+        return view('staff.assistant-progress-detail', compact('user', 'tasks', 'scoreWeek', 'scoreMonth'));
+    }
 }

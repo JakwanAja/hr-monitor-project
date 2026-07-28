@@ -63,6 +63,7 @@ Route::prefix('staff')->name('staff.')->middleware(['auth', 'role:hr_staff'])->g
     Route::patch('/assign-tasks/{task}', [StaffTaskController::class, 'assignUpdate'])->name('assign.update');
     Route::delete('/assign-tasks/{task}', [StaffTaskController::class, 'assignDestroy'])->name('assign.destroy');
     Route::get('/assistant-progress', [StaffTaskController::class, 'assistantProgress'])->name('assistant-progress');
+    Route::get('/assistant-progress/{user}', [StaffTaskController::class, 'assistantProgressDetail'])->name('assistant-progress.detail');
 });
 
 // ── HR Assistant ─────────────────────────────────────────────────────────────

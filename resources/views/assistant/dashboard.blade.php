@@ -104,7 +104,7 @@
     <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
             <h2 class="text-sm font-semibold text-gray-700">Tugas Hari Ini</h2>
-            <a href="{{ route('assistant.tasks.index') }}"
+            <a href="{{ route('assistant.tasks.all') }}"
                class="text-xs text-primary-600 hover:text-primary-700 font-medium">
                 Lihat Semua →
             </a>

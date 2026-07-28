@@ -18,7 +18,7 @@
     $totalCompleted   = $assistants->sum('completed_tasks');
 @endphp
 
-<div class="grid grid-cols-4 gap-5 mb-8">
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
     <div class="bg-white rounded-xl border border-gray-200 p-5">
         <div class="flex items-center justify-between mb-3">
             <p class="text-sm font-medium text-gray-500">Total Assistant</p>
@@ -93,6 +93,7 @@
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-32">Skor Minggu</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-32">Skor Bulan</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600">Progres</th>
+                <th class="text-right px-6 py-3.5 font-semibold text-gray-600 w-20">Aksi</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
@@ -149,16 +150,32 @@
                             <span class="text-xs font-medium text-gray-600 w-8">{{ $pct }}%</span>
                         </div>
                     </td>
+                    {{-- Aksi: Lihat Detail --}}
+                    <td class="px-6 py-4 w-20">
+                        <div class="flex justify-end">
+                            <a href="{{ route('staff.assistant-progress.detail', $assistant->id) }}"
+                               class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
+                               title="Lihat Detail Tugas">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">
+                    <td colspan="8" class="px-6 py-12 text-center text-gray-400 text-sm">
                         Tidak ada HR Assistant aktif.
                     </td>
                 </tr>
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 @endsection

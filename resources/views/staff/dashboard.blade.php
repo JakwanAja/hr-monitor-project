@@ -110,7 +110,7 @@
         <x-responsive-card>
             <div class="px-3 sm:px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="text-xs sm:text-sm font-semibold text-gray-700">Tugas Hari Ini</h2>
-                <a href="{{ route('staff.tasks.daily') }}"
+                <a href="{{ route('staff.tasks.all') }}"
                 class="text-xs text-primary-600 hover:text-primary-700 font-medium">
                  Lihat Semua →
                 </a>
