@@ -12,7 +12,7 @@
     @include('components.notification-popup')
 
     {{-- ── Stat Cards ──────────────────────────────────────── --}}
-    <x-responsive-grid :cols="'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5'" :gap="'gap-3 sm:gap-4 md:gap-5'">
+    <x-responsive-grid :cols="'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'" :gap="'gap-3 sm:gap-4 md:gap-5'">
 
         {{-- Total --}}
         <x-responsive-card :padding="'p-3 sm:p-4 md:p-5'">

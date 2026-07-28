@@ -12,7 +12,7 @@
     @include('components.notification-popup')
 
     {{-- ── Stat Cards ──────────────────────────────────────── --}}
-    <div class="grid grid-cols-5 gap-5 mb-8">
+    <x-responsive-grid :cols="'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'" :gap="'gap-4'" class="mb-8">
         <div class="bg-white rounded-xl border border-gray-200 p-5">
             <div class="flex items-center justify-between mb-3">
                 <p class="text-sm font-medium text-gray-500">Total Tugas</p>
@@ -98,7 +98,7 @@
             <p class="text-3xl font-bold text-purple-600">{{ $scoreMonth }}</p>
             <p class="text-xs text-gray-400 mt-1">poin bulan ini</p>
         </div>
-    </div>
+    </x-responsive-grid>
 
     {{-- ── Tugas Hari Ini ──────────────────────────────────── --}}
     <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
