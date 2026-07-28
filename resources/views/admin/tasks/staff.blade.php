@@ -18,7 +18,7 @@
 
 <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
     <div class="overflow-x-auto">
-    <table class="w-full text-xs sm:text-sm min-w-full">
+    <table class="w-full text-xs sm:text-sm min-w-[700px]">
         <thead>
             <tr class="bg-gray-50 border-b border-gray-200">
                 <th class="text-left px-3 sm:px-6 py-2.5 sm:py-3.5 font-semibold text-gray-600 w-24 sm:w-48">Judul</th>
@@ -92,7 +92,7 @@
                                               clip-rule="evenodd"/>
                                     </svg>
                                 @endif
-                                <span class="hidden sm:inline">{{ $assignee->name }}</span>
+                            <span class="hidden sm:inline">{{ $assignee->name }}</span>
                             </span>
                         @empty
                             <span class="text-xs text-gray-400">

@@ -70,12 +70,12 @@
                         </div>
                     @endif
                 </a>
-                <div class="flex-1 min-w-0 hidden sm:block">
+                <div class="flex-1 min-w-0">
                     <a href="{{ route('profile.show') }}"
                        class="block text-xs sm:text-sm font-semibold text-white truncate hover:text-primary-300 transition">
                         {{ Auth::user()->name }}
                     </a>
-                    <p class="text-xs text-slate-400 truncate">
+                    <p class="text-[11px] sm:text-xs text-slate-400 truncate">
                         {{ match(Auth::user()->role) {
                             'admin'        => 'Administrator',
                             'hr_staff'     => 'HR Staff',
