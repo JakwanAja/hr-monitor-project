@@ -149,8 +149,9 @@ class TaskController extends Controller
 
     public function history(Request $request)
     {
-        $date  = $request->query('date');
-        $tasks = $this->taskService->getHistoryForUser(Auth::id(), $date);
-        return view('assistant.history.index', compact('tasks', 'date'));
+        $date   = $request->query('date');
+        $search = $request->query('search');
+        $tasks  = $this->taskService->getHistoryForUser(Auth::id(), $date, $search);
+        return view('assistant.history.index', compact('tasks', 'date', 'search'));
     }
 }

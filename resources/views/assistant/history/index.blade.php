@@ -10,23 +10,40 @@
 
 @section('content')
 
-{{-- Filter Tanggal --}}
+{{-- Filter Tanggal & Pencarian --}}
 <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
     <form method="GET" action="{{ route('assistant.tasks.history') }}"
-          class="flex items-center gap-3">
-        <label class="text-sm font-medium text-gray-700">Filter Tanggal:</label>
-        <input type="date" name="date" value="{{ $date ?? '' }}"
-               class="px-4 py-2 border border-gray-300 rounded-lg text-sm
-                      focus:outline-none focus:ring-2 focus:ring-primary-500">
+          class="flex flex-wrap items-center gap-3">
+        
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-medium text-gray-500">Cari Tugas:</label>
+            <input type="text" name="search" value="{{ $search ?? '' }}"
+                   placeholder="Cari judul atau deskripsi..."
+                   class="px-4 py-2 border border-gray-300 rounded-lg text-sm
+                          focus:outline-none focus:ring-2 focus:ring-primary-500 w-56">
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-medium text-gray-500">Tanggal:</label>
+            <input type="date" name="date" value="{{ $date ?? '' }}"
+                   class="px-4 py-2 border border-gray-300 rounded-lg text-sm
+                          focus:outline-none focus:ring-2 focus:ring-primary-500">
+        </div>
+
         <button type="submit"
                 class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white
-                       text-sm font-medium rounded-lg transition">
-            Filter
+                       text-sm font-medium rounded-lg transition mt-auto">
+            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            Cari
         </button>
-        @if($date)
+
+        @if($date || $search)
             <a href="{{ route('assistant.tasks.history') }}"
                class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800
-                      border border-gray-300 rounded-lg transition">
+                      border border-gray-300 rounded-lg transition mt-auto">
                 Reset
             </a>
         @endif
@@ -137,9 +154,9 @@
                                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             <p class="text-sm font-medium text-gray-500">
-                                {{ $date ? 'Tidak ada tugas pada tanggal tersebut.' : 'Belum ada riwayat tugas.' }}
+                                {{ $date || $search ? 'Tidak ada tugas yang cocok dengan pencarian.' : 'Belum ada riwayat tugas.' }}
                             </p>
-                            @if(!$date)
+                            @if(!$date && !$search)
                                 <p class="text-xs text-gray-400">Riwayat akan muncul setelah kamu menyelesaikan tugas hari ini.</p>
                             @endif
                         </div>

@@ -19,40 +19,64 @@ class ReportController extends Controller
     public function history(Request $request)
     {
         $date   = $request->query('date');
+        $search = $request->query('search');
         $userId = $request->query('user_id');
         $users  = $this->userService->getAllUsers();
         $tasks  = $this->taskService->getHistoryForAdmin(
             $userId ? (int) $userId : null,
-            $date
+            $date,
+            $search
         );
-        return view('admin.reports.history', compact('tasks', 'users', 'date', 'userId'));
+        return view('admin.reports.history', compact('tasks', 'users', 'date', 'userId', 'search'));
     }
 
     public function productivity(Request $request)
     {
-        $date  = $request->query('date', Carbon::today()->toDateString());
-        $users = $this->userService->getAllUsers();
-    
-        $report = $users->map(function ($user) use ($date) {
-            $assignments = \App\Models\TaskAssignment::query()
-                ->where('user_id', $user->id)
-                ->whereHas('task', function ($q) use ($date) {
-                    $q->whereDate('task_date', $date);
-                })
-                ->with('task:id,title,type')
-                ->get();
+        $today    = Carbon::today()->toDateString();
+        $dateFrom = $request->query('date_from', $today);
+        $dateTo   = $request->query('date_to',   $today);
 
-            return [
-                'user'      => $user,
-                'total'     => $assignments->count(),
-                'completed' => $assignments->where('is_completed', 'completed')->count(),
-                'pending'   => $assignments->where('is_completed', 'pending')->count(),
-                'not_done'  => $assignments->where('is_completed', 'not_done')->count(),
-                'tasks'     => $assignments,
-            ];
-        });
-    
-        return view('admin.reports.productivity', compact('report', 'users', 'date'));
+        // Normalise: pastikan dateFrom <= dateTo
+        if ($dateFrom > $dateTo) {
+            [$dateFrom, $dateTo] = [$dateTo, $dateFrom];
+        }
+
+        $report = $this->taskService->getProductivityByRange($dateFrom, $dateTo);
+
+        return view('admin.reports.productivity', compact('report', 'dateFrom', 'dateTo', 'today'));
+    }
+
+    public function productivityDetail(Request $request, \App\Models\User $user)
+    {
+        abort_if(! in_array($user->role, ['hr_staff', 'hr_assistant']), 403);
+
+        $today    = Carbon::today()->toDateString();
+        $dateFrom = $request->query('date_from', $today);
+        $dateTo   = $request->query('date_to',   $today);
+
+        if ($dateFrom > $dateTo) {
+            [$dateFrom, $dateTo] = [$dateTo, $dateFrom];
+        }
+
+        $tasks = $this->taskService->getProductivityDetailForUser($user->id, $dateFrom, $dateTo);
+
+        // Hitung ringkasan
+        $total     = $tasks->count();
+        $completed = 0; $notDone = 0; $pending = 0;
+        foreach ($tasks as $task) {
+            $s = $task->assignments->first()?->is_completed ?? 'pending';
+            if ($s === 'completed')      $completed++;
+            elseif ($s === 'not_done')   $notDone++;
+            else                         $pending++;
+        }
+        $pct = $total > 0 ? round(($completed / $total) * 100) : 0;
+
+        // Kelompokkan per hari untuk tampilan yang lebih rapi
+        $tasksByDate = $tasks->groupBy(fn($t) => $t->task_date->toDateString());
+
+        return view('admin.reports.productivity-detail',
+            compact('user', 'tasks', 'tasksByDate', 'dateFrom', 'dateTo',
+                    'total', 'completed', 'notDone', 'pending', 'pct'));
     }
 
     public function ranking(Request $request)

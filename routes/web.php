@@ -39,6 +39,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/productivity', [ReportController::class, 'productivity'])->name('productivity');
+        Route::get('/productivity/{user}', [ReportController::class, 'productivityDetail'])->name('productivity.detail');
         Route::get('/history', [ReportController::class, 'history'])->name('history');
         Route::get('/ranking', [ReportController::class, 'ranking'])->name('ranking');
         // Admin kelola assignment bawahan

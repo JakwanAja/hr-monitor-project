@@ -29,11 +29,20 @@ class TaskRepository
         /** @var Builder $query */
         $query = $this->model->newQuery();
 
+        // Tampilkan tugas yang dibuat hari ini ATAU tugas lama yang masih ada
+        // penerima dengan status pending (belum diselesaikan)
         return $query
             ->with(['assignments', 'assignedUsers:id,name,role'])
             ->where('created_by', $staffId)
             ->where('type', 'assigned')
-            ->whereDate('task_date', Carbon::today())
+            ->where(function ($q) {
+                $q->whereDate('task_date', Carbon::today())
+                  ->orWhereHas('assignments', function ($q2) {
+                      $q2->where('is_completed', 'pending');
+                  });
+            })
+            ->whereDate('task_date', '<=', Carbon::today())
+            ->orderByDesc('task_date')
             ->orderByDesc('created_at')
             ->get();
     }
@@ -109,13 +118,22 @@ class TaskRepository
         /** @var Builder $query */
         $query = $this->model->newQuery();
 
+        // Tampilkan tugas mandiri hari ini ATAU tugas mandiri lama yang masih pending
         return $query
             ->with(['assignments' => function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             }])
             ->where('created_by', $userId)
             ->where('type', 'self')
-            ->whereDate('task_date', Carbon::today())
+            ->where(function ($q) use ($userId) {
+                $q->whereDate('task_date', Carbon::today())
+                  ->orWhereHas('assignments', function ($q2) use ($userId) {
+                      $q2->where('user_id', $userId)
+                         ->where('is_completed', 'pending');
+                  });
+            })
+            ->whereDate('task_date', '<=', Carbon::today())
+            ->orderByDesc('task_date')
             ->orderByDesc('created_at')
             ->get();
     }
@@ -142,22 +160,43 @@ class TaskRepository
 
     public function getAllTasksForUserToday(int $userId): Collection
     {
-    /** @var Builder $query */
-    $query = $this->model->newQuery();
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
 
-    return $query
-        ->with(['assignments' => function ($q) use ($userId) {
-            $q->where('user_id', $userId);
-        }, 'creator:id,name'])
-        ->whereHas('assignments', function ($q) use ($userId) {
-            $q->where('user_id', $userId);
-        })
-        ->whereDate('task_date', Carbon::today())
-        ->orderByDesc('created_at')
-        ->get();
+        return $query
+            ->with(['assignments' => function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            }, 'creator:id,name'])
+            ->whereHas('assignments', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            // default: hanya hari ini
+            // assigned + self: hari ini ATAU masih pending dari hari sebelumnya
+            ->where(function ($q) use ($userId) {
+                $q->where(function ($q2) {
+                      // default task: hanya hari ini
+                      $q2->where('type', 'default')
+                         ->whereDate('task_date', Carbon::today());
+                  })
+                  ->orWhere(function ($q2) use ($userId) {
+                      // assigned / self: tampilkan selama masih pending atau hari ini
+                      $q2->whereIn('type', ['assigned', 'self'])
+                         ->whereDate('task_date', '<=', Carbon::today())
+                         ->where(function ($q3) use ($userId) {
+                             $q3->whereDate('task_date', Carbon::today())
+                                ->orWhereHas('assignments', function ($q4) use ($userId) {
+                                    $q4->where('user_id', $userId)
+                                       ->where('is_completed', 'pending');
+                                });
+                         });
+                  });
+            })
+            ->orderByDesc('task_date')
+            ->orderByDesc('created_at')
+            ->get();
     }
 
-    public function getHistoryForUser(int $userId, ?string $date = null): Collection
+    public function getHistoryForUser(int $userId, ?string $date = null, ?string $search = null): Collection
     {
         /** @var Builder $query */
         $query = $this->model->newQuery();
@@ -172,11 +211,17 @@ class TaskRepository
             ->when($date, function ($q) use ($date) {
                 $q->whereDate('task_date', $date);
             })
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($q2) use ($search) {
+                    $q2->where('title', 'like', '%' . $search . '%')
+                       ->orWhere('description', 'like', '%' . $search . '%');
+                });
+            })
             ->orderByDesc('task_date')
             ->orderByDesc('created_at')
             ->get();
     }
-    public function getHistoryForAdmin(?int $userId = null, ?string $date = null): Collection
+    public function getHistoryForAdmin(?int $userId = null, ?string $date = null, ?string $search = null): Collection
     {
         /** @var Builder $query */
         $query = $this->model->newQuery();
@@ -198,6 +243,12 @@ class TaskRepository
             })
             ->when($date, function ($q) use ($date) {
                 $q->whereDate('task_date', $date);
+            })
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($q2) use ($search) {
+                    $q2->where('title', 'like', '%' . $search . '%')
+                       ->orWhere('description', 'like', '%' . $search . '%');
+                });
             })
             ->orderByDesc('task_date')
             ->orderByDesc('created_at')
@@ -257,6 +308,7 @@ class TaskRepository
         /** @var Builder $query */
         $query = $this->model->newQuery();
 
+        // default: hanya hari ini | assigned: hari ini + pending lama
         return $query
             ->with(['creator:id,name', 'assignments', 'assignedUsers:id,name,role'])
             ->whereHas('assignments', function ($q) {
@@ -264,7 +316,26 @@ class TaskRepository
                     $q->where('role', 'hr_assistant');
                 });
             })
-            ->whereDate('task_date', Carbon::today())
+            ->where(function ($q) {
+                $q->where(function ($q2) {
+                      $q2->where('type', 'default')
+                         ->whereDate('task_date', Carbon::today());
+                  })
+                  ->orWhere(function ($q2) {
+                      $q2->whereIn('type', ['assigned', 'self'])
+                         ->whereDate('task_date', '<=', Carbon::today())
+                         ->where(function ($q3) {
+                             $q3->whereDate('task_date', Carbon::today())
+                                ->orWhereHas('assignments', function ($q4) {
+                                    $q4->whereHas('user', function ($q5) {
+                                        $q5->where('role', 'hr_assistant');
+                                    })
+                                    ->where('is_completed', 'pending');
+                                });
+                         });
+                  });
+            })
+            ->orderByDesc('task_date')
             ->orderByDesc('created_at')
             ->get();
     }
@@ -391,7 +462,8 @@ class TaskRepository
     {
         /** @var Builder $query */
         $query = $this->model->newQuery();
-    
+
+        // Tampilkan tugas dari admin: hari ini ATAU masih pending dari hari sebelumnya
         return $query
             ->with(['assignments' => function ($q) use ($userId) {
                 $q->where('user_id', $userId);
@@ -403,7 +475,15 @@ class TaskRepository
                 $q->where('role', 'admin');
             })
             ->where('type', 'assigned')
-            ->whereDate('task_date', Carbon::today())
+            ->whereDate('task_date', '<=', Carbon::today())
+            ->where(function ($q) use ($userId) {
+                $q->whereDate('task_date', Carbon::today())
+                  ->orWhereHas('assignments', function ($q2) use ($userId) {
+                      $q2->where('user_id', $userId)
+                         ->where('is_completed', 'pending');
+                  });
+            })
+            ->orderByDesc('task_date')
             ->orderByDesc('created_at')
             ->get();
     }
@@ -430,7 +510,8 @@ class TaskRepository
     {
         /** @var Builder $query */
         $query = $this->model->newQuery();
-    
+
+        // Tampilkan tugas dari admin/staff: hari ini ATAU masih pending dari hari sebelumnya
         return $query
             ->with(['assignments' => function ($q) use ($userId) {
                 $q->where('user_id', $userId);
@@ -439,7 +520,15 @@ class TaskRepository
                 $q->where('user_id', $userId);
             })
             ->where('type', 'assigned')
-            ->whereDate('task_date', Carbon::today())
+            ->whereDate('task_date', '<=', Carbon::today())
+            ->where(function ($q) use ($userId) {
+                $q->whereDate('task_date', Carbon::today())
+                  ->orWhereHas('assignments', function ($q2) use ($userId) {
+                      $q2->where('user_id', $userId)
+                         ->where('is_completed', 'pending');
+                  });
+            })
+            ->orderByDesc('task_date')
             ->orderByDesc('created_at')
             ->get();
     }
@@ -490,5 +579,65 @@ class TaskRepository
         /** @var Builder $query */
         $query = TaskAssignment::query();
         return (bool) $query->where('id', $assignmentId)->delete();
+    }
+
+    // ── Laporan Produktivitas: rentang tanggal ───────────
+
+    /**
+     * Ringkasan produktivitas semua user (hr_staff + hr_assistant)
+     * dalam rentang tanggal dateFrom – dateTo.
+     *
+     * @return \Illuminate\Support\Collection<int, array{user: \App\Models\User, total: int, completed: int, pending: int, not_done: int, pct: int}>
+     */
+    public function getProductivityByRange(string $dateFrom, string $dateTo): \Illuminate\Support\Collection
+    {
+        $users = \App\Models\User::query()
+            ->whereIn('role', ['hr_staff', 'hr_assistant'])
+            ->where('is_active', 1)
+            ->orderBy('role')
+            ->orderBy('name')
+            ->get();
+
+        return $users->map(function ($user) use ($dateFrom, $dateTo) {
+            $assignments = TaskAssignment::query()
+                ->where('user_id', $user->id)
+                ->whereHas('task', function ($q) use ($dateFrom, $dateTo) {
+                    $q->whereBetween('task_date', [$dateFrom, $dateTo]);
+                })
+                ->get();
+
+            $total     = $assignments->count();
+            $completed = $assignments->where('is_completed', 'completed')->count();
+            $notDone   = $assignments->where('is_completed', 'not_done')->count();
+            $pending   = $total - $completed - $notDone;
+            $pct       = $total > 0 ? round(($completed / $total) * 100) : 0;
+
+            return compact('user', 'total', 'completed', 'pending', 'notDone', 'pct');
+        });
+    }
+
+    /**
+     * Detail tugas satu user dalam rentang tanggal dateFrom – dateTo,
+     * dikelompokkan per hari (task_date), diurutkan terbaru dahulu.
+     */
+    public function getProductivityDetailForUser(int $userId, string $dateFrom, string $dateTo): Collection
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+
+        return $query
+            ->with([
+                'assignments' => function ($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                },
+                'creator:id,name,role',
+            ])
+            ->whereHas('assignments', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->whereBetween('task_date', [$dateFrom, $dateTo])
+            ->orderByDesc('task_date')
+            ->orderByDesc('created_at')
+            ->get();
     }
 }

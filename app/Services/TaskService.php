@@ -264,14 +264,14 @@ class TaskService
         ->take(3)
         ->values();
     }
-    public function getHistoryForUser(int $userId, ?string $date = null): Collection
+    public function getHistoryForUser(int $userId, ?string $date = null, ?string $search = null): Collection
     {
-        return $this->taskRepository->getHistoryForUser($userId, $date);
+        return $this->taskRepository->getHistoryForUser($userId, $date, $search);
     }
 
-    public function getHistoryForAdmin(?int $userId = null, ?string $date = null): Collection
+    public function getHistoryForAdmin(?int $userId = null, ?string $date = null, ?string $search = null): Collection
     {
-        return $this->taskRepository->getHistoryForAdmin($userId, $date);
+        return $this->taskRepository->getHistoryForAdmin($userId, $date, $search);
     }
 
     public function getTasksByStaff(): Collection
@@ -367,5 +367,17 @@ class TaskService
         }
 
         return $this->taskRepository->deleteAssignmentById($assignmentId);
+    }
+
+    // ── Laporan Produktivitas: rentang tanggal ───────────
+
+    public function getProductivityByRange(string $dateFrom, string $dateTo): \Illuminate\Support\Collection
+    {
+        return $this->taskRepository->getProductivityByRange($dateFrom, $dateTo);
+    }
+
+    public function getProductivityDetailForUser(int $userId, string $dateFrom, string $dateTo): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->taskRepository->getProductivityDetailForUser($userId, $dateFrom, $dateTo);
     }
 }

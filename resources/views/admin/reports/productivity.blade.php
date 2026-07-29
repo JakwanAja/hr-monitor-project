@@ -2,7 +2,7 @@
 
 @section('title', 'Laporan Produktivitas')
 @section('page-title', 'Laporan Produktivitas')
-@section('page-subtitle', 'Rekap penyelesaian tugas harian per pengguna')
+@section('page-subtitle', 'Rekap penyelesaian tugas per pengguna berdasarkan periode')
 
 @section('sidebar')
     @include('components.sidebar-admin')
@@ -10,20 +10,34 @@
 
 @section('content')
 
-{{-- Filter Tanggal --}}
+{{-- Filter Rentang Tanggal --}}
 <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
     <form method="GET" action="{{ route('admin.reports.productivity') }}"
-          class="flex flex-wrap items-center gap-3">
-        <label class="text-sm font-medium text-gray-700">Tanggal:</label>
-        <input type="date" name="date" value="{{ $date }}"
-               class="px-4 py-2 border border-gray-300 rounded-lg text-sm
-                      focus:outline-none focus:ring-2 focus:ring-primary-500">
+          class="flex flex-wrap items-end gap-3">
+
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-medium text-gray-500">Dari Tanggal</label>
+            <input type="date" name="date_from" value="{{ $dateFrom }}"
+                   max="{{ $today }}"
+                   class="px-3 py-2 border border-gray-300 rounded-lg text-sm
+                          focus:outline-none focus:ring-2 focus:ring-primary-500">
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-medium text-gray-500">Sampai Tanggal</label>
+            <input type="date" name="date_to" value="{{ $dateTo }}"
+                   max="{{ $today }}"
+                   class="px-3 py-2 border border-gray-300 rounded-lg text-sm
+                          focus:outline-none focus:ring-2 focus:ring-primary-500">
+        </div>
+
         <button type="submit"
                 class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white
                        text-sm font-medium rounded-lg transition">
             Tampilkan
         </button>
-        @if($date !== \Carbon\Carbon::today()->toDateString())
+
+        @if($dateFrom !== $today || $dateTo !== $today)
             <a href="{{ route('admin.reports.productivity') }}"
                class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800
                       border border-gray-300 rounded-lg transition">
@@ -31,99 +45,118 @@
             </a>
         @endif
     </form>
+
+    {{-- Info periode aktif --}}
+    <p class="text-xs text-gray-400 mt-3">
+        Menampilkan produktivitas periode:
+        <span class="font-medium text-gray-600">
+            {{ \Carbon\Carbon::parse($dateFrom)->locale('id')->translatedFormat('d M Y') }}
+            @if($dateFrom !== $dateTo)
+                — {{ \Carbon\Carbon::parse($dateTo)->locale('id')->translatedFormat('d M Y') }}
+            @endif
+        </span>
+    </p>
 </div>
 
-{{-- Laporan Per User --}}
-<div class="space-y-4">
-    @foreach($report as $item)
-        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            {{-- Header User --}}
-            <div class="px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 sm:w-9 h-8 sm:h-9 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
-                        <span class="text-xs sm:text-sm font-semibold text-primary-600">
-                            {{ strtoupper(substr($item['user']->name, 0, 1)) }}
-                        </span>
-                    </div>
-                    <div>
-                        <p class="text-xs sm:text-sm font-semibold text-gray-800">{{ $item['user']->name }}</p>
-                        <p class="text-xs text-gray-400">
-                            {{ $item['user']->role === 'hr_staff' ? 'HR Staff' : 'HR Assistant' }}
-                        </p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3 sm:gap-6 w-full sm:w-auto">
-                    <div class="text-center">
-                        <p class="text-base sm:text-lg font-bold text-gray-800">{{ $item['total'] }}</p>
-                        <p class="text-xs text-gray-400">Total</p>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-base sm:text-lg font-bold text-green-600">{{ $item['completed'] }}</p>
-                        <p class="text-xs text-gray-400">Selesai</p>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-base sm:text-lg font-bold text-yellow-600">{{ $item['pending'] }}</p>
-                        <p class="text-xs text-gray-400">Pending</p>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-base sm:text-lg font-bold text-red-500">{{ $item['not_done'] }}</p>
-                        <p class="text-xs text-gray-400">Tdk Dikerjakan</p>
-                    </div>
+{{-- Tabel Ringkasan Produktivitas --}}
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
+    <div class="px-4 sm:px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-gray-700">Ringkasan per Pengguna</h2>
+        <span class="text-xs text-gray-400">{{ $report->count() }} pengguna</span>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm min-w-[640px]">
+            <thead>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                    <th class="text-left px-4 sm:px-6 py-3.5 font-semibold text-gray-600">Nama</th>
+                    <th class="text-left px-4 sm:px-6 py-3.5 font-semibold text-gray-600 w-24">Role</th>
+                    <th class="text-left px-4 sm:px-6 py-3.5 font-semibold text-gray-600 w-20">Total</th>
+                    <th class="text-left px-4 sm:px-6 py-3.5 font-semibold text-gray-600 w-24">Selesai</th>
+                    <th class="text-left px-4 sm:px-6 py-3.5 font-semibold text-gray-600 w-24">Pending</th>
+                    <th class="text-left px-4 sm:px-6 py-3.5 font-semibold text-gray-600 w-28">Tdk Dikerjakan</th>
+                    <th class="text-left px-4 sm:px-6 py-3.5 font-semibold text-gray-600 w-36">Produktivitas</th>
+                    <th class="text-right px-4 sm:px-6 py-3.5 font-semibold text-gray-600 w-20">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                @forelse($report as $item)
                     @php
-                        $pct = $item['total'] > 0
-                            ? round(($item['completed'] / $item['total']) * 100)
-                            : 0;
+                        $barColor = $item['pct'] === 100
+                            ? 'bg-green-500'
+                            : ($item['pct'] >= 50 ? 'bg-primary-500' : 'bg-yellow-500');
+                        $pctColor = $item['pct'] === 100
+                            ? 'text-green-600'
+                            : ($item['pct'] >= 50 ? 'text-primary-600' : 'text-yellow-600');
                     @endphp
-                    <div class="text-center">
-                        <p class="text-base sm:text-lg font-bold
-                            {{ $pct === 100 ? 'text-green-600' : ($pct >= 50 ? 'text-primary-600' : 'text-yellow-600') }}">
-                            {{ $pct }}%
-                        </p>
-                        <p class="text-xs text-gray-400">Progress</p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Detail Tugas --}}
-            @if($item['tasks']->count() > 0)
-                <div class="divide-y divide-gray-50">
-                    @foreach($item['tasks'] as $assignment)
-                        @php
-                            $taskDone    = $assignment->is_completed === 'completed';
-                            $taskNotDone = $assignment->is_completed === 'not_done';
-                        @endphp
-                        <div class="px-3 sm:px-6 py-2 sm:py-3 flex items-center gap-2 sm:gap-3">
-                            <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0
-                                        {{ $taskDone ? 'border-green-500 bg-green-500' : ($taskNotDone ? 'border-red-400 bg-red-400' : 'border-gray-300') }}">
-                                @if($taskDone)
-                                    <svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                              clip-rule="evenodd"/>
-                                    </svg>
-                                @elseif($taskNotDone)
-                                    <svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                              clip-rule="evenodd"/>
-                                    </svg>
-                                @endif
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-4 sm:px-6 py-3.5">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-8 h-8 rounded-full
+                                    {{ $item['user']->role === 'hr_staff' ? 'bg-blue-100' : 'bg-purple-100' }}
+                                    flex items-center justify-center flex-shrink-0">
+                                    <span class="text-xs font-semibold
+                                        {{ $item['user']->role === 'hr_staff' ? 'text-blue-600' : 'text-purple-600' }}">
+                                        {{ strtoupper(substr($item['user']->name, 0, 1)) }}
+                                    </span>
+                                </div>
+                                <span class="font-medium text-gray-800 truncate">{{ $item['user']->name }}</span>
                             </div>
-                            <p class="text-xs sm:text-sm flex-1
-                                      {{ $taskDone ? 'line-through text-gray-400' : ($taskNotDone ? 'text-red-400' : 'text-gray-700') }}">
-                                {{ $assignment->task?->title ?? '-' }}
-                            </p>
-                            <x-task-status-badge :status="$assignment->is_completed ?? 'pending'" :completedAt="$assignment?->completed_at" />
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="px-3 sm:px-6 py-4 text-xs sm:text-sm text-gray-400 text-center">
-                    Tidak ada tugas pada tanggal ini.
-                </div>
-            @endif
-        </div>
-    @endforeach
+                        </td>
+                        <td class="px-4 sm:px-6 py-3.5 w-24">
+                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium
+                                {{ $item['user']->role === 'hr_staff'
+                                    ? 'bg-blue-50 text-blue-700'
+                                    : 'bg-purple-50 text-purple-700' }}">
+                                {{ $item['user']->role === 'hr_staff' ? 'HR Staff' : 'HR Asst' }}
+                            </span>
+                        </td>
+                        <td class="px-4 sm:px-6 py-3.5 w-20">
+                            <span class="text-gray-700 font-medium">{{ $item['total'] }}</span>
+                        </td>
+                        <td class="px-4 sm:px-6 py-3.5 w-24">
+                            <span class="text-green-600 font-semibold">{{ $item['completed'] }}</span>
+                        </td>
+                        <td class="px-4 sm:px-6 py-3.5 w-24">
+                            <span class="text-yellow-600 font-medium">{{ $item['pending'] }}</span>
+                        </td>
+                        <td class="px-4 sm:px-6 py-3.5 w-28">
+                            <span class="text-red-500 font-medium">{{ $item['notDone'] }}</span>
+                        </td>
+                        <td class="px-4 sm:px-6 py-3.5 w-36">
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden min-w-[50px]">
+                                    <div class="{{ $barColor }} h-full rounded-full"
+                                         style="width: {{ $item['pct'] }}%"></div>
+                                </div>
+                                <span class="text-xs font-bold {{ $pctColor }} w-8 text-right">
+                                    {{ $item['pct'] }}%
+                                </span>
+                            </div>
+                        </td>
+                        <td class="px-4 sm:px-6 py-3.5 w-20 text-right">
+                            <a href="{{ route('admin.reports.productivity.detail', $item['user']->id) }}?date_from={{ $dateFrom }}&date_to={{ $dateTo }}"
+                               class="p-1.5 inline-flex text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
+                               title="Lihat Detail Tugas">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943
+                                             9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="8" class="px-6 py-12 text-center text-gray-400 text-sm">
+                            Tidak ada data pengguna aktif.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>
 
 @endsection
