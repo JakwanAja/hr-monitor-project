@@ -33,7 +33,17 @@
                     $assignment = $task->assignments->first();
                     $status     = $assignment?->is_completed ?? 'pending';
                 @endphp
-                <tr class="hover:bg-gray-50 transition">
+                <tr class="hover:bg-gray-50 transition"
+                    data-task="{{ json_encode([
+                        'title'       => $task->title,
+                        'description' => $task->description ?? '',
+                        'type'        => $task->type,
+                        'date'        => $task->task_date->translatedFormat('d M Y'),
+                        'source'      => 'Sistem',
+                        'status'      => $status,
+                        'note'        => $assignment?->note ?? '',
+                        'assignees'   => [],
+                    ]) }}">
                     <td class="px-6 py-4 w-48">
                         <div class="truncate max-w-[170px] font-medium text-gray-800"
                              title="{{ $task->title }}">
@@ -66,16 +76,7 @@
                                     </svg>
                                 </button>
                                 <button
-                                    onclick="openDetailModal({
-                                        title: '{{ addslashes($task->title) }}',
-                                        description: '{{ addslashes($task->description ?? '') }}',
-                                        type: '{{ $task->type }}',
-                                        date: '{{ $task->task_date->translatedFormat('d M Y') }}',
-                                        source: '{{ addslashes($task->creator?->name ?? 'Sistem') }}',
-                                        status: '{{ $status ?? 'pending' }}',
-                                        note: '{{ addslashes($assignment?->note ?? '') }}',
-                                        assignees: []
-                                    })"
+                                    onclick="openDetailModal(JSON.parse(this.closest('tr').dataset.task))"
                                     class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
                                     title="Lihat Detail">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
