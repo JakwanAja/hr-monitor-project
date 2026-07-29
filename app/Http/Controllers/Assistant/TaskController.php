@@ -20,6 +20,7 @@ class TaskController extends Controller
     public function routineIndex()
     {
         $tasks = $this->taskService->getDefaultTasksForAssistant(Auth::id());
+        $tasks = $this->taskService->sortTasksByStatus($tasks, Auth::id());
         return view('assistant.tasks.routine', compact('tasks'));
     }
 
@@ -42,6 +43,7 @@ class TaskController extends Controller
     public function assignedIndex()
     {
         $tasks = $this->taskService->getAllAssignedTasksForAssistant(Auth::id());
+        $tasks = $this->taskService->sortTasksByStatus($tasks, Auth::id());
         return view('assistant.tasks.assigned', compact('tasks'));
     }
 
@@ -65,6 +67,7 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = $this->taskService->getSelfTasksToday(Auth::id());
+        $tasks = $this->taskService->sortTasksByStatus($tasks, Auth::id());
         return view('assistant.tasks.index', compact('tasks'));
     }
 
@@ -129,6 +132,7 @@ class TaskController extends Controller
     public function allIndex()
     {
         $tasks = $this->taskService->getAllTasksForUserToday(Auth::id());
+        $tasks = $this->taskService->sortTasksByStatus($tasks, Auth::id());
         return view('assistant.tasks.all', compact('tasks'));
     }
 

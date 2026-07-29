@@ -369,6 +369,23 @@ class TaskService
         return $this->taskRepository->deleteAssignmentById($assignmentId);
     }
 
+    /**
+     * Urutkan koleksi tugas berdasarkan status:
+     * pending → not_done → completed
+     */
+    public function sortTasksByStatus(\Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Collection $tasks, int $userId = 0): \Illuminate\Support\Collection
+    {
+        $order = ['pending' => 0, 'not_done' => 1, 'completed' => 2];
+
+        return $tasks->sortBy(function ($task) use ($order, $userId) {
+            $assignment = $userId
+                ? $task->assignments->firstWhere('user_id', $userId)
+                : $task->assignments->first();
+            $status = $assignment?->is_completed ?? 'pending';
+            return $order[$status] ?? 0;
+        })->values();
+    }
+
     // ── Laporan Produktivitas: rentang tanggal ───────────
 
     public function getProductivityByRange(string $dateFrom, string $dateTo): \Illuminate\Support\Collection

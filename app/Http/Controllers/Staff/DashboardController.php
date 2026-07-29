@@ -30,6 +30,12 @@ class DashboardController extends Controller
             )->count(),
         ];
 
+        // Urutkan: pending di atas, not_done di tengah, completed di bawah
+        $statusOrder = ['pending' => 0, 'not_done' => 1, 'completed' => 2];
+        $tasks = $tasks->sortBy(fn($t) =>
+            $statusOrder[$t->assignments->first()?->is_completed ?? 'pending'] ?? 0
+        )->values();
+
         $scoreWeek  = $this->taskService->getUserScore($userId, 'week');
         $scoreMonth = $this->taskService->getUserScore($userId, 'month');
         $assistants = $this->taskService->getAssistantProgressForStaff();
