@@ -369,6 +369,34 @@ class TaskService
         return $this->taskRepository->deleteAssignmentById($assignmentId);
     }
 
+    public function getAssistantProgressByRange(string $dateFrom, string $dateTo): \Illuminate\Support\Collection
+    {
+        $assistants = app(\App\Repositories\UserRepository::class)
+            ->getAllByRole('hr_assistant');
+
+        return $assistants->map(function ($assistant) use ($dateFrom, $dateTo) {
+            $assignments = \App\Models\TaskAssignment::query()
+                ->where('user_id', $assistant->id)
+                ->whereHas('task', function ($q) use ($dateFrom, $dateTo) {
+                    $q->whereBetween('task_date', [$dateFrom, $dateTo]);
+                })
+                ->get();
+
+            $total     = $assignments->count();
+            $completed = $assignments->where('is_completed', 'completed')->count();
+            $notDone   = $assignments->where('is_completed', 'not_done')->count();
+            $pending   = $total - $completed - $notDone;
+
+            // Inject properties agar view bisa pakai notasi objek
+            $assistant->total_tasks     = $total;
+            $assistant->completed_tasks = $completed;
+            $assistant->not_done_tasks  = $notDone;
+            $assistant->pending_tasks   = $pending;
+
+            return $assistant;
+        });
+    }
+
     /**
      * Urutkan koleksi tugas berdasarkan status:
      * pending → not_done → completed

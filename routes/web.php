@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\TaskController as AdminTaskController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Staff\DashboardController as StaffDashboard;
 use App\Http\Controllers\Staff\TaskController as StaffTaskController;
+use App\Http\Controllers\Staff\UserController as StaffUserController;
 use App\Http\Controllers\Assistant\DashboardController as AssistantDashboard;
 use App\Http\Controllers\Assistant\TaskController as AssistantTaskController;
 use App\Http\Controllers\NotificationController;
@@ -66,6 +67,11 @@ Route::prefix('staff')->name('staff.')->middleware(['auth', 'role:hr_staff'])->g
     Route::delete('/assign-tasks/{task}', [StaffTaskController::class, 'assignDestroy'])->name('assign.destroy');
     Route::get('/assistant-progress', [StaffTaskController::class, 'assistantProgress'])->name('assistant-progress');
     Route::get('/assistant-progress/{user}', [StaffTaskController::class, 'assistantProgressDetail'])->name('assistant-progress.detail');
+
+    // Manajemen HR Assistant
+    Route::resource('users', StaffUserController::class)
+        ->only(['index', 'store', 'update', 'destroy']);
+    Route::patch('/users/{user}/password', [StaffUserController::class, 'updatePassword'])->name('users.password');
 });
 
 // ── HR Assistant ─────────────────────────────────────────────────────────────

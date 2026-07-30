@@ -33,6 +33,18 @@ class UserRepository
             ->get();
     }
 
+    public function getAllByRole(string $role): Collection
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+
+        return $query
+            ->where('role', $role)
+            ->where('is_active', 1)
+            ->orderBy('name')
+            ->get();
+    }
+
     public function findById(int $id): ?User
     {
         /** @var Builder $query */

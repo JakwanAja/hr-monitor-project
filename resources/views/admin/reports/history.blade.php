@@ -45,22 +45,28 @@
                           focus:outline-none focus:ring-2 focus:ring-primary-500">
         </div>
 
-        <button type="submit"
-                class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white
-                       text-sm font-medium rounded-lg transition mt-auto">
-            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-            Cari
-        </button>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-medium text-transparent select-none">_</label>
+            <button type="submit"
+                    class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white
+                           text-sm font-medium rounded-lg transition">
+                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                Cari
+            </button>
+        </div>
 
         @if($date || $userId || $search)
-            <a href="{{ route('admin.reports.history') }}"
-               class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800
-                      border border-gray-300 rounded-lg transition mt-auto">
-                Reset
-            </a>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-medium text-transparent select-none">_</label>
+                <a href="{{ route('admin.reports.history') }}"
+                   class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800
+                          border border-gray-300 rounded-lg transition">
+                    Reset
+                </a>
+            </div>
         @endif
     </form>
 </div>

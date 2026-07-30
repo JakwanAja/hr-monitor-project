@@ -206,29 +206,67 @@ class TaskController extends Controller
         }
     }
 
-    public function assistantProgress()
+    public function assistantProgress(Request $request)
     {
-        $assistants = $this->taskService->getDailyStatsForAssistants();
-        $scoreData  = [];
+        $today    = \Carbon\Carbon::today()->toDateString();
+        $dateFrom = $request->query('date_from', $today);
+        $dateTo   = $request->query('date_to',   $today);
 
+        if ($dateFrom > $dateTo) {
+            [$dateFrom, $dateTo] = [$dateTo, $dateFrom];
+        }
+
+        $assistants = $this->taskService->getAssistantProgressByRange($dateFrom, $dateTo);
+
+        $scoreData = [];
         foreach ($assistants as $assistant) {
             $scoreData[$assistant->id] = [
                 'week'  => $this->taskService->getUserScore($assistant->id, 'week'),
                 'month' => $this->taskService->getUserScore($assistant->id, 'month'),
             ];
         }
-        return view('staff.assistant-progress', compact('assistants', 'scoreData'));
+
+        return view('staff.assistant-progress', compact(
+            'assistants', 'scoreData', 'dateFrom', 'dateTo', 'today'
+        ));
     }
 
-    public function assistantProgressDetail(\App\Models\User $user)
+    public function assistantProgressDetail(Request $request, \App\Models\User $user)
     {
-        // Pastikan yang dibuka adalah HR Assistant
         abort_if($user->role !== 'hr_assistant', 403);
 
-        $tasks = $this->taskService->getAllTasksForUserToday($user->id);
+        $today    = \Carbon\Carbon::today()->toDateString();
+        $dateFrom = $request->query('date_from', $today);
+        $dateTo   = $request->query('date_to',   $today);
+
+        if ($dateFrom > $dateTo) {
+            [$dateFrom, $dateTo] = [$dateTo, $dateFrom];
+        }
+
+        $tasks = $this->taskService->getProductivityDetailForUser($user->id, $dateFrom, $dateTo);
+
         $scoreWeek  = $this->taskService->getUserScore($user->id, 'week');
         $scoreMonth = $this->taskService->getUserScore($user->id, 'month');
 
-        return view('staff.assistant-progress-detail', compact('user', 'tasks', 'scoreWeek', 'scoreMonth'));
+        // Hitung ringkasan
+        $total = $tasks->count();
+        $completed = $notDone = $pending = 0;
+        foreach ($tasks as $task) {
+            $s = $task->assignments->first()?->is_completed ?? 'pending';
+            if ($s === 'completed')    $completed++;
+            elseif ($s === 'not_done') $notDone++;
+            else                       $pending++;
+        }
+        $pct = $total > 0 ? round(($completed / $total) * 100) : 0;
+
+        // Kelompokkan per hari
+        $tasksByDate = $tasks->groupBy(fn($t) => $t->task_date->toDateString());
+
+        return view('staff.assistant-progress-detail', compact(
+            'user', 'tasks', 'tasksByDate',
+            'dateFrom', 'dateTo',
+            'total', 'completed', 'notDone', 'pending', 'pct',
+            'scoreWeek', 'scoreMonth'
+        ));
     }
 }
