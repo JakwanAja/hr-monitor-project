@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\NotificationController as AdminNotificationContro
 use App\Http\Controllers\Staff\DashboardController as StaffDashboard;
 use App\Http\Controllers\Staff\TaskController as StaffTaskController;
 use App\Http\Controllers\Staff\UserController as StaffUserController;
+use App\Http\Controllers\Staff\NotificationController as StaffNotificationController;
 use App\Http\Controllers\Assistant\DashboardController as AssistantDashboard;
 use App\Http\Controllers\Assistant\TaskController as AssistantTaskController;
 use App\Http\Controllers\NotificationController;
@@ -77,6 +78,10 @@ Route::prefix('staff')->name('staff.')->middleware(['auth', 'role:hr_staff'])->g
     Route::resource('users', StaffUserController::class)
         ->only(['index', 'store', 'update', 'destroy']);
     Route::patch('/users/{user}/password', [StaffUserController::class, 'updatePassword'])->name('users.password');
+
+    // Notifikasi Custom
+    Route::get('/notifications', [StaffNotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications', [StaffNotificationController::class, 'store'])->name('notifications.store');
 });
 
 // ── HR Assistant ─────────────────────────────────────────────────────────────

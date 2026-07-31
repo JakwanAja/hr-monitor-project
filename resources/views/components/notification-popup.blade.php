@@ -3,8 +3,13 @@
 @endphp
 
 @if($unreadNotifications->count() > 0)
+@php
+    // Kumpulkan semua ID notifikasi yang belum dibaca di halaman ini
+    $popupNotifIds = $unreadNotifications->pluck('id')->toArray();
+@endphp
+
 <div id="notification-popup"
-     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+     class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 flex flex-col max-h-[85vh]">
 
         {{-- Header --}}
@@ -17,7 +22,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-base font-semibold text-gray-800">Tugas Baru Masuk</h3>
+                    <h3 class="text-base font-semibold text-gray-800">Notifikasi Baru</h3>
                     <p class="text-xs text-gray-500">
                         {{ $unreadNotifications->count() }} notifikasi belum dibaca
                     </p>
@@ -35,30 +40,35 @@
         {{-- Daftar Notifikasi --}}
         <div class="overflow-y-auto flex-1 divide-y divide-gray-100">
             @foreach($unreadNotifications as $notification)
-                @php $data = $notification->data; @endphp
+                @php
+                    $data     = $notification->data;
+                    $isCustom = ($data['type'] ?? null) === 'custom';
+                    $title    = $isCustom ? ($data['title'] ?? 'Pengumuman') : ($data['task_title'] ?? 'Tugas Baru');
+                    $body     = $data['message'] ?? '';
+                @endphp
                 <div class="px-6 py-4 hover:bg-gray-50 transition">
                     <div class="flex items-start gap-3">
-                        <div class="w-2 h-2 rounded-full bg-primary-500 flex-shrink-0 mt-2"></div>
+                        <div class="w-2 h-2 rounded-full flex-shrink-0 mt-2
+                                    {{ $isCustom ? 'bg-yellow-400' : 'bg-primary-500' }}"></div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-gray-800">
-                                {{ $data['task_title'] ?? 'Tugas Baru' }}
-                            </p>
-                            <p class="text-sm text-gray-500 mt-0.5">
-                                {{ $data['message'] ?? '' }}
-                            </p>
+                            <p class="text-sm font-semibold text-gray-800">{{ $title }}</p>
+                            <p class="text-sm text-gray-500 mt-0.5">{{ $body }}</p>
                             <div class="flex items-center gap-3 mt-1.5">
                                 <span class="text-xs text-gray-400">
                                     {{ $notification->created_at->locale('id')->diffForHumans() }}
                                 </span>
-                                @if(isset($data['task_date']))
+                                @if(!$isCustom && isset($data['task_date']))
                                     <span class="text-xs text-gray-400">•</span>
                                     <span class="text-xs text-gray-400">
                                         {{ \Carbon\Carbon::parse($data['task_date'])->locale('id')->translatedFormat('d M Y') }}
                                     </span>
                                 @endif
+                                @if($isCustom && !empty($data['sender_name']))
+                                    <span class="text-xs text-gray-400">•</span>
+                                    <span class="text-xs text-gray-400">Dari: {{ $data['sender_name'] }}</span>
+                                @endif
                             </div>
                         </div>
-                        {{-- Mark as read per item --}}
                         <form action="{{ route('notifications.read', $notification->id) }}"
                               method="POST" class="flex-shrink-0">
                             @csrf
@@ -99,18 +109,67 @@
 </div>
 
 <script>
-    function closeNotificationPopup() {
-        document.getElementById('notification-popup').classList.add('hidden');
-        // Simpan ke sessionStorage agar tidak muncul lagi di halaman yang sama
-        sessionStorage.setItem('notification_popup_closed', '1');
+(function () {
+    var popup       = document.getElementById('notification-popup');
+    // ID notifikasi yang ada di halaman ini (dari server)
+    var currentIds  = @json($popupNotifIds);
+    var STORAGE_KEY = 'notif_seen_ids';
+
+    /**
+     * Ambil array ID yang sudah pernah ditampilkan dari sessionStorage.
+     */
+    function getSeenIds() {
+        try {
+            return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '[]');
+        } catch (e) {
+            return [];
+        }
     }
 
-    // Cek apakah sudah ditutup di sesi ini
-    document.addEventListener('DOMContentLoaded', function () {
-        const closed = sessionStorage.getItem('notification_popup_closed');
-        if (closed) {
-            document.getElementById('notification-popup').classList.add('hidden');
-        }
+    /**
+     * Simpan ID yang sudah ditampilkan ke sessionStorage.
+     * Hanya menyimpan ID yang benar-benar ada agar storage tidak membengkak.
+     */
+    function markAsSeen(ids) {
+        var seen = getSeenIds();
+        ids.forEach(function (id) {
+            if (seen.indexOf(id) === -1) seen.push(id);
+        });
+        // Batasi maksimal 100 entri agar storage tidak membengkak
+        if (seen.length > 100) seen = seen.slice(seen.length - 100);
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(seen));
+    }
+
+    /**
+     * Cek apakah semua ID notifikasi saat ini sudah pernah ditampilkan.
+     * Jika ada SATU SAJA yang belum pernah dilihat → popup harus muncul.
+     */
+    function hasUnseen() {
+        var seen = getSeenIds();
+        return currentIds.some(function (id) {
+            return seen.indexOf(id) === -1;
+        });
+    }
+
+    if (!popup) return;
+
+    if (hasUnseen()) {
+        // Ada notifikasi yang belum pernah ditampilkan → tampilkan popup
+        popup.classList.remove('hidden');
+        // Catat semua ID ini sebagai sudah ditampilkan
+        markAsSeen(currentIds);
+    }
+    // Jika semua sudah pernah dilihat → popup tetap hidden, tidak perlu action
+
+    window.closeNotificationPopup = function () {
+        popup.classList.add('hidden');
+        // Tidak perlu set flag tambahan — ID sudah dicatat di markAsSeen() saat tampil
+    };
+
+    // Tutup saat klik area gelap di luar modal
+    popup.addEventListener('click', function (e) {
+        if (e.target === popup) closeNotificationPopup();
     });
+})();
 </script>
 @endif

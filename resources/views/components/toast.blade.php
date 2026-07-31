@@ -173,8 +173,7 @@
             dot.addEventListener('animationend', function () { dot.remove(); });
         }
     }
-
-    document.addEventListener('DOMContentLoaded', show);
+    requestAnimationFrame(show);
 })();
 </script>
 
@@ -244,7 +243,8 @@
         timer = setTimeout(dismissSuccessSmall, 2000);
     });
 
-    document.addEventListener('DOMContentLoaded', show);
+    // Jalankan langsung — elemen sudah ada di DOM karena script ada setelah elemen
+    requestAnimationFrame(show);
 })();
 </script>
 
@@ -317,7 +317,8 @@
         timer = setTimeout(dismissErrorToast, 2000);
     });
 
-    document.addEventListener('DOMContentLoaded', show);
+    // Jalankan langsung — elemen sudah ada di DOM karena script ada setelah elemen
+    requestAnimationFrame(show);
 })();
 </script>
 

@@ -190,9 +190,6 @@
             </div>
         </header>
 
-        {{-- Toast Pop-up --}}
-        @include('components.toast')
-
         {{-- Page Content --}}
         <main class="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
             @yield('content')
@@ -201,5 +198,13 @@
 
     @include('components.task-detail-modal')
 </div>
+
+{{-- Notification Popup — di luar semua container overflow --}}
+@include('components.notification-popup')
+
+{{-- Toast — di luar semua container overflow agar position:fixed tidak ter-clip --}}
+@include('components.toast')
+
+@stack('scripts')
 </body>
 </html>
