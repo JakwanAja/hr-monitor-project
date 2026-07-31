@@ -158,14 +158,14 @@
                               focus:outline-none focus:ring-2 focus:ring-primary-500">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Password Awal</label>
                 <input type="password" name="password" required minlength="8"
+                       placeholder="Password"
                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
                               focus:outline-none focus:ring-2 focus:ring-primary-500">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password</label>
                 <input type="password" name="password_confirmation" required
+                       placeholder="Konfirmasi Password"
                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
                               focus:outline-none focus:ring-2 focus:ring-primary-500">
             </div>

@@ -50,6 +50,7 @@
         @php
             $isUnread = is_null($notification->read_at);
             $data     = $notification->data;
+            $isCustom = ($data['type'] ?? null) === 'custom';
         @endphp
         <div class="bg-white rounded-xl border {{ $isUnread ? 'border-primary-200 bg-primary-50/30' : 'border-gray-200' }}
                     p-4 flex items-start gap-4 transition">
@@ -57,35 +58,61 @@
             {{-- Icon --}}
             <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0
                         {{ $isUnread ? 'bg-primary-100' : 'bg-gray-100' }}">
-                <svg class="w-5 h-5 {{ $isUnread ? 'text-primary-600' : 'text-gray-400' }}"
-                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                </svg>
+                @if($isCustom)
+                    <svg class="w-5 h-5 {{ $isUnread ? 'text-primary-600' : 'text-gray-400' }}"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                    </svg>
+                @else
+                    <svg class="w-5 h-5 {{ $isUnread ? 'text-primary-600' : 'text-gray-400' }}"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                @endif
             </div>
 
             {{-- Konten --}}
             <div class="flex-1 min-w-0">
                 <div class="flex items-start justify-between gap-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-800">
-                            {{ $data['task_title'] ?? 'Tugas Baru' }}
-                        </p>
-                        <p class="text-sm text-gray-600 mt-0.5">
-                            {{ $data['message'] ?? '' }}
-                        </p>
-                        <div class="flex items-center gap-3 mt-2">
-                            <span class="text-xs text-gray-400">
-                                {{ $notification->created_at->locale('id')->diffForHumans() }}
-                            </span>
-                            @if(isset($data['task_date']))
-                                <span class="text-xs text-gray-400">•</span>
+                        @if($isCustom)
+                            <p class="text-sm font-semibold text-gray-800">
+                                {{ $data['title'] ?? 'Pengumuman' }}
+                            </p>
+                            <p class="text-sm text-gray-600 mt-0.5">
+                                {{ $data['message'] ?? '' }}
+                            </p>
+                            <div class="flex items-center gap-3 mt-2">
                                 <span class="text-xs text-gray-400">
-                                    Tanggal tugas:
-                                    {{ \Carbon\Carbon::parse($data['task_date'])->locale('id')->translatedFormat('d M Y') }}
+                                    {{ $notification->created_at->locale('id')->diffForHumans() }}
                                 </span>
-                            @endif
-                        </div>
+                                @if(!empty($data['sender_name']))
+                                    <span class="text-xs text-gray-400">•</span>
+                                    <span class="text-xs text-gray-400">Dari: {{ $data['sender_name'] }}</span>
+                                @endif
+                            </div>
+                        @else
+                            <p class="text-sm font-semibold text-gray-800">
+                                {{ $data['task_title'] ?? 'Tugas Baru' }}
+                            </p>
+                            <p class="text-sm text-gray-600 mt-0.5">
+                                {{ $data['message'] ?? '' }}
+                            </p>
+                            <div class="flex items-center gap-3 mt-2">
+                                <span class="text-xs text-gray-400">
+                                    {{ $notification->created_at->locale('id')->diffForHumans() }}
+                                </span>
+                                @if(isset($data['task_date']))
+                                    <span class="text-xs text-gray-400">•</span>
+                                    <span class="text-xs text-gray-400">
+                                        Tanggal tugas:
+                                        {{ \Carbon\Carbon::parse($data['task_date'])->locale('id')->translatedFormat('d M Y') }}
+                                    </span>
+                                @endif
+                            </div>
+                        @endif
                     </div>
 
                     {{-- Badge + Aksi --}}

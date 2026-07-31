@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DefaultTaskController;
 use App\Http\Controllers\Admin\TaskController as AdminTaskController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Staff\DashboardController as StaffDashboard;
 use App\Http\Controllers\Staff\TaskController as StaffTaskController;
 use App\Http\Controllers\Staff\UserController as StaffUserController;
@@ -47,6 +48,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         Route::patch('/assignments/{assignmentId}/complete', [ReportController::class, 'completeAssignment'])->name('assignments.complete');
         Route::delete('/assignments/{assignmentId}', [ReportController::class, 'destroyAssignment'])->name('assignments.destroy');
     });
+
+    // Notifikasi Custom
+    Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications', [AdminNotificationController::class, 'store'])->name('notifications.store');
 });
 
 // ── HR Staff ────────────────────────────────────────────────────────────────
