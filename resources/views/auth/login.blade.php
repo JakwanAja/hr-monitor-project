@@ -17,8 +17,14 @@
         <div class="absolute right-0 top-0 h-full w-16 bg-white rounded-l-[60px] z-10"></div>
 
         <div class="relative z-20 flex flex-col items-center text-center">
-            <img src="{{ asset('images/seveninc_logo.png') }}" alt="HR-DWMS Logo" class="w-80 drop-shadow-xl">
-        </div>   
+            @if(!empty($appLogo))
+                <img src="{{ asset('storage/' . $appLogo) }}" alt="{{ $appName }}"
+                     class="w-80 drop-shadow-xl object-contain">
+            @else
+                <img src="{{ asset('images/seveninc_logo.png') }}" alt="{{ $appName }}"
+                     class="w-80 drop-shadow-xl">
+            @endif
+        </div>
     </section>
 
     {{-- Sisi Kanan: Form Login --}}
@@ -27,7 +33,13 @@
 
             {{-- Header Form --}}
             <div class="mb-8 text-center">
-                <img src="{{ asset('images/seveninc_logo.png') }}" alt="HR-DWMS" class="w-24 mx-auto lg:hidden mb-4">
+                @if(!empty($appLogo))
+                    <img src="{{ asset('storage/' . $appLogo) }}" alt="{{ $appName }}"
+                         class="w-24 mx-auto lg:hidden mb-4 object-contain">
+                @else
+                    <img src="{{ asset('images/seveninc_logo.png') }}" alt="{{ $appName }}"
+                         class="w-24 mx-auto lg:hidden mb-4">
+                @endif
                 <div class="flex justify-center mb-3">
                     <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center">
                         <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

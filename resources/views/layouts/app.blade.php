@@ -32,9 +32,16 @@
         {{-- Logo --}}
         <div class="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-5 border-b border-white/10 flex-shrink-0 gap-2">
             <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-                <img src="{{ asset('images/seveninc_logo.png') }}" alt="Seveninc Logo"
-                     class="w-8 sm:w-9 h-8 sm:h-9 object-contain flex-shrink-0">
-                <span class="text-white font-bold text-lg sm:text-2xl tracking-tight truncate">Seven Inc</span>
+                @if(!empty($appLogo))
+                    <img src="{{ asset('storage/' . $appLogo) }}" alt="{{ $appName }}"
+                         class="w-8 sm:w-9 h-8 sm:h-9 object-contain flex-shrink-0">
+                @else
+                    <img src="{{ asset('images/seveninc_logo.png') }}" alt="{{ $appName }}"
+                         class="w-8 sm:w-9 h-8 sm:h-9 object-contain flex-shrink-0">
+                @endif
+                <span class="text-white font-bold text-lg sm:text-2xl tracking-tight truncate">
+                    {{ $appName }}
+                </span>
             </div>
             {{-- Tutup sidebar di mobile --}}
             <button @click="sidebarOpen = false"
@@ -201,6 +208,9 @@
 
 {{-- Notification Popup — di luar semua container overflow --}}
 @include('components.notification-popup')
+
+{{-- Floating Chat Button --}}
+@include('components.floating-chat')
 
 {{-- Toast — di luar semua container overflow agar position:fixed tidak ter-clip --}}
 @include('components.toast')

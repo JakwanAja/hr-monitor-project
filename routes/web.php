@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DefaultTaskController;
 use App\Http\Controllers\Admin\TaskController as AdminTaskController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
+use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Staff\DashboardController as StaffDashboard;
 use App\Http\Controllers\Staff\TaskController as StaffTaskController;
 use App\Http\Controllers\Staff\UserController as StaffUserController;
@@ -53,6 +54,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     // Notifikasi Custom
     Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications', [AdminNotificationController::class, 'store'])->name('notifications.store');
+
+    // Pengaturan
+    Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings/app-info', [AdminSettingController::class, 'updateAppInfo'])->name('settings.app-info');
+    Route::post('/settings/wa-groups', [AdminSettingController::class, 'storeWaGroup'])->name('settings.wa-groups.store');
+    Route::patch('/settings/wa-groups/{waGroup}', [AdminSettingController::class, 'updateWaGroup'])->name('settings.wa-groups.update');
+    Route::delete('/settings/wa-groups/{waGroup}', [AdminSettingController::class, 'destroyWaGroup'])->name('settings.wa-groups.destroy');
 });
 
 // ── HR Staff ────────────────────────────────────────────────────────────────
