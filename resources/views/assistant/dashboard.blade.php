@@ -71,7 +71,7 @@
             <p class="text-xs text-gray-400 mt-1">melewati batas waktu</p>
         </div>
 
-        <div class="bg-white rounded-xl border border-gray-200 p-5">
+        {{--<div class="bg-white rounded-xl border border-gray-200 p-5">
             <div class="flex items-center justify-between mb-3">
                 <p class="text-sm font-medium text-gray-500">Skor Minggu Ini</p>
                 <div class="w-9 h-9 rounded-lg bg-yellow-50 flex items-center justify-center">
@@ -97,7 +97,7 @@
             </div>
             <p class="text-3xl font-bold text-purple-600">{{ $scoreMonth }}</p>
             <p class="text-xs text-gray-400 mt-1">poin bulan ini</p>
-        </div>
+        </div>--}}
     </x-responsive-grid>
 
     {{-- ── Tugas Hari Ini ──────────────────────────────────── --}}

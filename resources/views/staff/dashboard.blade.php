@@ -58,7 +58,7 @@
             <p class="text-xs text-gray-400 mt-1">masih dalam pengerjaan</p>
         </x-responsive-card>
 
-        {{-- Tidak Dikerjakan 
+        {{-- Tidak Dikerjakan --}}
         <x-responsive-card :padding="'p-3 sm:p-4 md:p-5'">
             <div class="flex items-center justify-between mb-3">
                 <p class="text-xs sm:text-sm font-medium text-gray-500">Tidak Dikerjakan</p>
@@ -71,9 +71,9 @@
             </div>
             <p class="text-2xl sm:text-3xl font-bold text-red-600">{{ $stats['not_done'] }}</p>
             <p class="text-xs text-gray-400 mt-1">melewati batas waktu</p>
-        </x-responsive-card> --}}
+        </x-responsive-card> 
 
-        {{-- Skor Minggu Ini --}}
+        {{-- Skor Minggu Ini 
         <x-responsive-card :padding="'p-3 sm:p-4 md:p-5'">
             <div class="flex items-center justify-between mb-3">
                 <p class="text-xs sm:text-sm font-medium text-gray-500">Skor Minggu Ini</p>
@@ -86,9 +86,9 @@
             </div>
             <p class="text-2xl sm:text-3xl font-bold text-yellow-600">{{ $scoreWeek }}</p>
             <p class="text-xs text-gray-400 mt-1">poin minggu ini</p>
-        </x-responsive-card>
+        </x-responsive-card> --}}
 
-        {{-- Skor Bulan Ini --}}
+        {{-- Skor Bulan Ini 
         <x-responsive-card :padding="'p-3 sm:p-4 md:p-5'">
             <div class="flex items-center justify-between mb-3">
                 <p class="text-xs sm:text-sm font-medium text-gray-500">Skor Bulan Ini</p>
@@ -101,7 +101,7 @@
             </div>
             <p class="text-2xl sm:text-3xl font-bold text-purple-600">{{ $scoreMonth }}</p>
             <p class="text-xs text-gray-400 mt-1">poin bulan ini</p>
-        </x-responsive-card>
+        </x-responsive-card> --}}
     </x-responsive-grid>
 
     <x-responsive-grid :cols="'grid-cols-1 lg:grid-cols-2'" :gap="'gap-4 md:gap-6'">

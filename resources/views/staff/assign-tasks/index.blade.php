@@ -35,7 +35,7 @@
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-48">Judul</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600">Deskripsi</th>
                 <th class="text-left px-6 py-3.5 font-semibold text-gray-600 w-48">Penerima</th>
-                <th class="text-right px-6 py-3.5 font-semibold text-gray-600 w-20">Aksi</th>
+                <th class="text-right px-6 py-3.5 font-semibold text-gray-600 w-28">Aksi</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
@@ -79,8 +79,35 @@
                             @endforeach
                         </div>
                     </td>
-                    <td class="px-6 py-4 w-20">
+                    <td class="px-6 py-4 w-28">
                         <div class="flex items-center justify-end gap-2 whitespace-nowrap">
+
+                            {{-- Tombol Detail — selalu tampil --}}
+                            <button
+                                onclick="openDetailModal(
+                                    '{{ addslashes($task->title) }}',
+                                    '{{ addslashes($task->description ?? '') }}',
+                                    '{{ $task->task_date->translatedFormat('d M Y') }}',
+                                    {{ json_encode($task->assignedUsers->map(function($u) use ($task) {
+                                        $a = $task->assignments->firstWhere('user_id', $u->id);
+                                        return [
+                                            'name'         => $u->name,
+                                            'status'       => $a?->is_completed ?? 'pending',
+                                            'note'         => $a?->note ?? '',
+                                            'completed_at' => $a?->completed_at?->translatedFormat('d M Y, H:i') ?? '',
+                                        ];
+                                    })->values()) }}
+                                )"
+                                class="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
+                                title="Lihat Detail">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </button>
+
                             @if(!$hasCompleted)
                                 <button
                                     onclick="openEditModal(
@@ -260,6 +287,39 @@
     </div>
 </div>
 
+{{-- ── MODAL DETAIL TUGAS ──────────────────────────────── --}}
+<div id="modal-detail" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 flex flex-col max-h-[85vh]">
+
+        {{-- Header --}}
+        <div class="flex items-start justify-between px-6 py-4 border-b border-gray-200 flex-shrink-0">
+            <div class="min-w-0 pr-4">
+                <h3 id="detail-title" class="text-base font-semibold text-gray-800 break-words"></h3>
+                <p id="detail-date" class="text-xs text-gray-400 mt-0.5"></p>
+            </div>
+            <button onclick="document.getElementById('modal-detail').classList.add('hidden')"
+                    class="flex-shrink-0 text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        {{-- Deskripsi --}}
+        <div id="detail-desc-wrap" class="px-6 pt-4 hidden">
+            <p class="text-xs font-medium text-gray-500 mb-1">Deskripsi / Instruksi</p>
+            <p id="detail-desc" class="text-sm text-gray-700 whitespace-pre-line leading-relaxed"></p>
+        </div>
+
+        {{-- Daftar Penerima + Status --}}
+        <div class="px-6 pt-4 pb-2 flex-shrink-0">
+            <p class="text-xs font-medium text-gray-500 mb-2">Status per Penerima</p>
+        </div>
+        <div id="detail-assignees" class="px-6 pb-6 overflow-y-auto flex-1 space-y-2"></div>
+    </div>
+</div>
+
 {{-- ── MODAL HAPUS ─────────────────────────────────────── --}}
 <div id="modal-delete" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4">
@@ -296,6 +356,70 @@
 
 {{-- ── JavaScript ──────────────────────────────────────── --}}
 <script>
+    function openDetailModal(title, description, date, assignees) {
+        document.getElementById('detail-title').textContent = title;
+        document.getElementById('detail-date').textContent  = 'Tanggal: ' + date;
+
+        const descWrap = document.getElementById('detail-desc-wrap');
+        const descEl   = document.getElementById('detail-desc');
+        if (description && description.trim() !== '') {
+            descEl.textContent = description;
+            descWrap.classList.remove('hidden');
+        } else {
+            descWrap.classList.add('hidden');
+        }
+
+        const statusLabel = { pending: 'Belum Selesai', completed: 'Selesai', not_done: 'Tidak Dikerjakan' };
+        const statusClass  = {
+            pending:  'bg-yellow-50 text-yellow-700 border-yellow-200',
+            completed:'bg-green-50  text-green-700  border-green-200',
+            not_done: 'bg-red-50    text-red-700    border-red-200',
+        };
+        const dotClass = {
+            pending:  'bg-yellow-400',
+            completed:'bg-green-500',
+            not_done: 'bg-red-500',
+        };
+
+        const container = document.getElementById('detail-assignees');
+        container.innerHTML = '';
+
+        if (!assignees || assignees.length === 0) {
+            container.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">Tidak ada penerima.</p>';
+        } else {
+            assignees.forEach(function (a) {
+                const s    = a.status || 'pending';
+                const card = document.createElement('div');
+                card.className = 'flex items-start gap-3 p-3 rounded-xl border ' + (statusClass[s] || statusClass.pending);
+                card.innerHTML =
+                    '<div class="w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ' + (dotClass[s] || dotClass.pending) + '"></div>' +
+                    '<div class="flex-1 min-w-0">' +
+                        '<div class="flex items-center justify-between gap-2">' +
+                            '<p class="text-sm font-semibold text-gray-800 truncate">' + escHtml(a.name) + '</p>' +
+                            '<span class="text-xs font-medium whitespace-nowrap">' + (statusLabel[s] || s) + '</span>' +
+                        '</div>' +
+                        (a.completed_at
+                            ? '<p class="text-xs text-gray-500 mt-0.5">Diselesaikan: ' + escHtml(a.completed_at) + '</p>'
+                            : '') +
+                        (a.note && a.note.trim() !== ''
+                            ? '<p class="text-xs text-gray-500 mt-1 italic">"' + escHtml(a.note) + '"</p>'
+                            : '') +
+                    '</div>';
+                container.appendChild(card);
+            });
+        }
+
+        document.getElementById('modal-detail').classList.remove('hidden');
+    }
+
+    function escHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
     function openEditModal(id, title, description, currentUserIds) {
         document.getElementById('edit-title').value = title;
         document.getElementById('edit-description').value = description;
