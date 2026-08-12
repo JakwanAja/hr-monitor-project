@@ -87,7 +87,9 @@
                             'admin'        => 'Administrator',
                             'hr_staff'     => 'HR Staff',
                             'hr_assistant' => 'HR Assistant',
-                            default        => Auth::user()->role,
+                            'cs'           => 'Customer Service',
+                            'ob'           => 'Office Boy',
+                            default        => strtoupper(Auth::user()->role),
                         } }}
                     </p>
                 </div>

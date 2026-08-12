@@ -27,7 +27,7 @@ class UserRepository
         $query = $this->model->newQuery();
 
         return $query
-            ->whereIn('role', ['hr_staff', 'hr_assistant'])
+            ->whereIn('role', ['hr_staff', 'hr_assistant', 'cs', 'ob'])
             ->orderBy('role')
             ->orderBy('name')
             ->get();

@@ -40,14 +40,17 @@ class TaskService
         $query = User::query();
 
         if ($role === 'admin') {
+            // Admin bisa assign ke semua role kecuali admin itu sendiri
             return $query
-                ->whereIn('role', ['hr_staff', 'hr_assistant'])
+                ->whereIn('role', ['hr_staff', 'hr_assistant', 'cs', 'ob'])
                 ->where('is_active', 1)
                 ->orderBy('role')
                 ->orderBy('name')
                 ->get();
         }
 
+        // hr_staff bisa assign ke hr_assistant saja (punya bawahan)
+        // cs dan ob tidak punya bawahan — tidak dipanggil untuk assign
         return $query
             ->where('role', 'hr_assistant')
             ->where('is_active', 1)
@@ -207,8 +210,8 @@ class TaskService
         $role = Auth::user()->role;
 
         $allowedRoles = $role === 'admin'
-            ? ['hr_staff', 'hr_assistant']
-            : ['hr_assistant'];
+            ? ['hr_staff', 'hr_assistant', 'cs', 'ob']
+            : ['hr_assistant']; // hr_staff hanya bisa assign ke hr_assistant
 
         /** @var Builder $query */
         $query = User::query();

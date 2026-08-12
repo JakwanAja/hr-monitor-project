@@ -13,6 +13,10 @@ use App\Http\Controllers\Staff\DashboardController as StaffDashboard;
 use App\Http\Controllers\Staff\TaskController as StaffTaskController;
 use App\Http\Controllers\Staff\UserController as StaffUserController;
 use App\Http\Controllers\Staff\NotificationController as StaffNotificationController;
+use App\Http\Controllers\Cs\DashboardController as CsDashboard;
+use App\Http\Controllers\Cs\TaskController as CsTaskController;
+use App\Http\Controllers\Ob\DashboardController as ObDashboard;
+use App\Http\Controllers\Ob\TaskController as ObTaskController;
 use App\Http\Controllers\Assistant\DashboardController as AssistantDashboard;
 use App\Http\Controllers\Assistant\TaskController as AssistantTaskController;
 use App\Http\Controllers\NotificationController;
@@ -90,6 +94,34 @@ Route::prefix('staff')->name('staff.')->middleware(['auth', 'role:hr_staff'])->g
     // Notifikasi Custom
     Route::get('/notifications', [StaffNotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications', [StaffNotificationController::class, 'store'])->name('notifications.store');
+});
+
+// ── CS (Customer Service) ────────────────────────────────────────────────────
+Route::prefix('cs')->name('cs.')->middleware(['auth', 'role:cs'])->group(function () {
+    Route::get('/dashboard', [CsDashboard::class, 'index'])->name('dashboard');
+    Route::resource('tasks', CsTaskController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::patch('/tasks/{task}/complete', [CsTaskController::class, 'complete'])->name('tasks.complete');
+    Route::get('/tasks/daily', [CsTaskController::class, 'dailyIndex'])->name('tasks.daily');
+    Route::patch('/tasks/daily/{task}/complete', [CsTaskController::class, 'dailyComplete'])->name('tasks.daily.complete');
+    Route::get('/tasks/assigned', [CsTaskController::class, 'assignedIndex'])->name('tasks.assigned');
+    Route::patch('/tasks/assigned/{task}/complete', [CsTaskController::class, 'assignedComplete'])->name('tasks.assigned.complete');
+    Route::get('/tasks/all', [CsTaskController::class, 'allIndex'])->name('tasks.all');
+    Route::patch('/tasks/all/{task}/complete', [CsTaskController::class, 'allComplete'])->name('tasks.all.complete');
+    Route::get('/history', [CsTaskController::class, 'history'])->name('tasks.history');
+});
+
+// ── OB (Office Boy) ──────────────────────────────────────────────────────────
+Route::prefix('ob')->name('ob.')->middleware(['auth', 'role:ob'])->group(function () {
+    Route::get('/dashboard', [ObDashboard::class, 'index'])->name('dashboard');
+    Route::resource('tasks', ObTaskController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::patch('/tasks/{task}/complete', [ObTaskController::class, 'complete'])->name('tasks.complete');
+    Route::get('/tasks/daily', [ObTaskController::class, 'dailyIndex'])->name('tasks.daily');
+    Route::patch('/tasks/daily/{task}/complete', [ObTaskController::class, 'dailyComplete'])->name('tasks.daily.complete');
+    Route::get('/tasks/assigned', [ObTaskController::class, 'assignedIndex'])->name('tasks.assigned');
+    Route::patch('/tasks/assigned/{task}/complete', [ObTaskController::class, 'assignedComplete'])->name('tasks.assigned.complete');
+    Route::get('/tasks/all', [ObTaskController::class, 'allIndex'])->name('tasks.all');
+    Route::patch('/tasks/all/{task}/complete', [ObTaskController::class, 'allComplete'])->name('tasks.all.complete');
+    Route::get('/history', [ObTaskController::class, 'history'])->name('tasks.history');
 });
 
 // ── HR Assistant ─────────────────────────────────────────────────────────────

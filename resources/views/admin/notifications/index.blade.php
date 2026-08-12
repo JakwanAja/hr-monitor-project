@@ -2,7 +2,7 @@
 
 @section('title', 'Kirim Notifikasi')
 @section('page-title', 'Kirim Notifikasi')
-@section('page-subtitle', 'Buat dan kirimkan notifikasi ke HR Staff atau HR Assistant')
+@section('page-subtitle', 'Buat dan kirimkan notifikasi ke seluruh anggota tim')
 
 @section('sidebar')
     @include('components.sidebar-admin')
@@ -57,9 +57,11 @@
                     <select name="recipients" x-model="recipients"
                             class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm
                                    focus:outline-none focus:ring-2 focus:ring-primary-500">
-                        <option value="all">Semua (HR Staff & HR Assistant)</option>
+                        <option value="all">Semua (Seluruh Anggota Tim)</option>
                         <option value="hr_staff">Semua HR Staff</option>
                         <option value="hr_assistant">Semua HR Assistant</option>
+                        <option value="cs">Semua CS (Customer Service)</option>
+                        <option value="ob">Semua OB (Office Boy)</option>
                         <option value="specific">Pilih Pengguna Tertentu</option>
                     </select>
                 </div>
@@ -77,7 +79,12 @@
                                 <div class="flex-1 min-w-0">
                                     <p class="text-sm font-medium text-gray-800 truncate" x-text="user.name"></p>
                                     <p class="text-xs text-gray-400"
-                                       x-text="user.role === 'hr_staff' ? 'HR Staff' : 'HR Assistant'"></p>
+                                       x-text="{
+                                           hr_staff:     'HR Staff',
+                                           hr_assistant: 'HR Assistant',
+                                           cs:           'Customer Service',
+                                           ob:           'Office Boy',
+                                       }[user.role] ?? user.role"></p>
                                 </div>
                             </label>
                         </template>

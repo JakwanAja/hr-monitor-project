@@ -275,22 +275,22 @@ class TaskRepository
         /** @var Builder $query */
         $query = $this->model->newQuery();
 
-        // Tasks created by staff (self + assigned)
+        // Tasks created by any standalone role (hr_staff, cs, ob) — self + assigned
         $staffCreatedTasks = $query
             ->with(['creator:id,name', 'assignments', 'assignedUsers:id,name,role'])
             ->whereHas('creator', function ($q) {
-                $q->where('role', 'hr_staff');
+                $q->whereIn('role', ['hr_staff', 'cs', 'ob']);
             })
             ->whereIn('type', ['self', 'assigned'])
             ->whereDate('task_date', Carbon::today());
 
-        // Union with tasks assigned by admin to ANY staff member
+        // Union with tasks assigned by admin to ANY staff-level member
         return $staffCreatedTasks->union(
             Task::query()
                 ->with(['creator:id,name', 'assignments', 'assignedUsers:id,name,role'])
                 ->whereHas('assignments', function ($q) {
                     $q->whereHas('user', function ($q) {
-                        $q->where('role', 'hr_staff');
+                        $q->whereIn('role', ['hr_staff', 'cs', 'ob']);
                     });
                 })
                 ->whereHas('creator', function ($q) {
@@ -392,7 +392,7 @@ class TaskRepository
     public function getDailyStatsPerUser(): Collection
     {
         return \App\Models\User::query()
-            ->whereIn('role', ['hr_staff', 'hr_assistant'])
+            ->whereIn('role', ['hr_staff', 'hr_assistant', 'cs', 'ob'])
             ->where('is_active', 1)
             ->withCount([
                 'taskAssignments as total_tasks' => function ($q) {
@@ -592,7 +592,7 @@ class TaskRepository
     public function getProductivityByRange(string $dateFrom, string $dateTo): \Illuminate\Support\Collection
     {
         $users = \App\Models\User::query()
-            ->whereIn('role', ['hr_staff', 'hr_assistant'])
+            ->whereIn('role', ['hr_staff', 'hr_assistant', 'cs', 'ob'])
             ->where('is_active', 1)
             ->orderBy('role')
             ->orderBy('name')

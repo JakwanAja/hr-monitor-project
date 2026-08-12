@@ -67,4 +67,24 @@ class User extends Authenticatable
     {
         return $this->role === 'hr_assistant';
     }
+
+    public function isCs(): bool
+    {
+        return $this->role === 'cs';
+    }
+
+    public function isOb(): bool
+    {
+        return $this->role === 'ob';
+    }
+
+    /**
+     * Apakah role ini setara "staff mandiri" (tidak punya bawahan)?
+     * cs dan ob memakai pola dashboard/tugas yang sama dengan staff
+     * tetapi tanpa fitur kelola assistant.
+     */
+    public function isStandalone(): bool
+    {
+        return in_array($this->role, ['cs', 'ob']);
+    }
 }

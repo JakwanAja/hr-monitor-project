@@ -47,6 +47,8 @@ class AuthService
             'admin'        => route('admin.dashboard'),
             'hr_staff'     => route('staff.dashboard'),
             'hr_assistant' => route('assistant.dashboard'),
+            'cs'           => route('cs.dashboard'),
+            'ob'           => route('ob.dashboard'),
             default        => route('login'),
         };
     }
