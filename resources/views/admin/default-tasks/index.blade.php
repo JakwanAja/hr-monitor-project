@@ -66,8 +66,20 @@
                     {{-- Target Role --}}
                     <td class="px-6 py-4 w-32">
                         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
-                            {{ $task->target_role === 'hr_staff' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700' }}">
-                            {{ $task->target_role === 'hr_staff' ? 'HR Staff' : 'HR Assistant' }}
+                            {{ match($task->target_role) {
+                                'hr_staff'     => 'bg-blue-50 text-blue-700',
+                                'hr_assistant' => 'bg-purple-50 text-purple-700',
+                                'cs'           => 'bg-teal-50 text-teal-700',
+                                'ob'           => 'bg-orange-50 text-orange-700',
+                                default        => 'bg-gray-100 text-gray-600',
+                            } }}">
+                            {{ match($task->target_role) {
+                                'hr_staff'     => 'HR Staff',
+                                'hr_assistant' => 'HR Assistant',
+                                'cs'           => 'CS',
+                                'ob'           => 'OB',
+                                default        => strtoupper($task->target_role),
+                            } }}
                         </span>
                     </td>
 
@@ -158,6 +170,8 @@
                 <option value="">-- Pilih Role --</option>
                 <option value="hr_staff">HR Staff</option>
                 <option value="hr_assistant">HR Assistant</option>
+                <option value="cs">CS (Customer Service)</option>
+                <option value="ob">OB (Office Boy)</option>
             </select>
         </div>
         <div>
@@ -216,6 +230,8 @@
                            focus:outline-none focus:ring-2 focus:ring-primary-500">
                 <option value="hr_staff">HR Staff</option>
                 <option value="hr_assistant">HR Assistant</option>
+                <option value="cs">CS (Customer Service)</option>
+                <option value="ob">OB (Office Boy)</option>
             </select>
         </div>
         <div>

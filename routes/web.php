@@ -43,6 +43,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         ->only(['index', 'store', 'update', 'destroy']);
     Route::get('/tasks/staff', [AdminTaskController::class, 'staffTasks'])->name('tasks.staff');
     Route::get('/tasks/assistant', [AdminTaskController::class, 'assistantTasks'])->name('tasks.assistant');
+    Route::get('/tasks/cs', [AdminTaskController::class, 'csTasks'])->name('tasks.cs');
+    Route::get('/tasks/ob', [AdminTaskController::class, 'obTasks'])->name('tasks.ob');
     Route::delete('/tasks/{task}/force', [AdminTaskController::class, 'forceDestroy'])->name('tasks.force-destroy');
 
     Route::prefix('reports')->name('reports.')->group(function () {

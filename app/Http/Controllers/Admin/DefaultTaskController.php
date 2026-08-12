@@ -24,7 +24,7 @@ class DefaultTaskController extends Controller
         $validated = $request->validate([
             'title'       => ['required', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
-            'target_role' => ['required', 'in:hr_staff,hr_assistant'],
+            'target_role' => ['required', 'in:hr_staff,hr_assistant,cs,ob'],
             'is_active'   => ['nullable', 'boolean'],
         ]);
 
@@ -39,7 +39,7 @@ class DefaultTaskController extends Controller
         $validated = $request->validate([
             'title'       => ['required', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
-            'target_role' => ['required', 'in:hr_staff,hr_assistant'],
+            'target_role' => ['required', 'in:hr_staff,hr_assistant,cs,ob'],
             'is_active'   => ['nullable', 'boolean'],
         ]);
 

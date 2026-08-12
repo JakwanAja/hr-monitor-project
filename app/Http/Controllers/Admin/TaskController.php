@@ -70,7 +70,7 @@ class TaskController extends Controller
         }
     }
 
-    // ── Halaman 2: Tugas HR Staff ────────────────────────
+    // ── Halaman 2: Pantau HR Staff ───────────────────────
 
     public function staffTasks()
     {
@@ -78,12 +78,28 @@ class TaskController extends Controller
         return view('admin.tasks.staff', compact('tasks'));
     }
 
-    // ── Halaman 3: Tugas HR Assistant ────────────────────
+    // ── Halaman 3: Pantau HR Assistant ───────────────────
 
     public function assistantTasks()
     {
         $tasks = $this->taskService->getAllTasksForAssistant();
         return view('admin.tasks.assistant', compact('tasks'));
+    }
+
+    // ── Halaman 4: Pantau CS ─────────────────────────────
+
+    public function csTasks()
+    {
+        $tasks = $this->taskService->getAllTasksForRole('cs');
+        return view('admin.tasks.cs', compact('tasks'));
+    }
+
+    // ── Halaman 5: Pantau OB ─────────────────────────────
+
+    public function obTasks()
+    {
+        $tasks = $this->taskService->getAllTasksForRole('ob');
+        return view('admin.tasks.ob', compact('tasks'));
     }
 
     // ── Force Destroy (Admin hapus task siapapun) ────────

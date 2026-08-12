@@ -340,6 +340,46 @@ class TaskRepository
             ->get();
     }
 
+    /**
+     * Ambil semua tugas yang masuk ke role tertentu (cs, ob, dst.)
+     * dengan pola yang sama seperti getAllTasksForAssistant.
+     */
+    public function getAllTasksForRole(string $role): Collection
+    {
+        /** @var Builder $query */
+        $query = $this->model->newQuery();
+
+        return $query
+            ->with(['creator:id,name', 'assignments', 'assignedUsers:id,name,role'])
+            ->whereHas('assignments', function ($q) use ($role) {
+                $q->whereHas('user', function ($q) use ($role) {
+                    $q->where('role', $role);
+                });
+            })
+            ->where(function ($q) use ($role) {
+                $q->where(function ($q2) {
+                      $q2->where('type', 'default')
+                         ->whereDate('task_date', Carbon::today());
+                  })
+                  ->orWhere(function ($q2) use ($role) {
+                      $q2->whereIn('type', ['assigned', 'self'])
+                         ->whereDate('task_date', '<=', Carbon::today())
+                         ->where(function ($q3) use ($role) {
+                             $q3->whereDate('task_date', Carbon::today())
+                                ->orWhereHas('assignments', function ($q4) use ($role) {
+                                    $q4->whereHas('user', function ($q5) use ($role) {
+                                        $q5->where('role', $role);
+                                    })
+                                    ->where('is_completed', 'pending');
+                                });
+                         });
+                  });
+            })
+            ->orderByDesc('task_date')
+            ->orderByDesc('created_at')
+            ->get();
+    }
+
     public function isDefaultTaskAlreadyGenerated(int $defaultTaskId, string $date): bool
     {
         /** @var Builder $query */

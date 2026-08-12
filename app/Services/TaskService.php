@@ -292,6 +292,11 @@ class TaskService
         return $this->taskRepository->getAllTasksForAssistant();
     }
 
+    public function getAllTasksForRole(string $role): Collection
+    {
+        return $this->taskRepository->getAllTasksForRole($role);
+    }
+
     public function getDailyStats(): array
     {
         return $this->taskRepository->getDailyStats();
