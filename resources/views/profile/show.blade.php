@@ -9,6 +9,10 @@
         @include('components.sidebar-admin')
     @elseif(Auth::user()->isHrStaff())
         @include('components.sidebar-staff')
+    @elseif(Auth::user()->isCs())
+        @include('components.sidebar-cs')
+    @elseif(Auth::user()->isOb())
+        @include('components.sidebar-ob')
     @else
         @include('components.sidebar-assistant')
     @endif
@@ -22,12 +26,16 @@
         'admin'        => 'Administrator',
         'hr_staff'     => 'HR Staff',
         'hr_assistant' => 'HR Assistant',
-        default        => $user->role,
+        'cs'           => 'Customer Service',
+        'ob'           => 'Office Boy',
+        default        => strtoupper($user->role),
     };
     $roleColor = match($user->role) {
         'admin'        => 'bg-red-50 text-red-700 border-red-100',
         'hr_staff'     => 'bg-blue-50 text-blue-700 border-blue-100',
         'hr_assistant' => 'bg-purple-50 text-purple-700 border-purple-100',
+        'cs'           => 'bg-teal-50 text-teal-700 border-teal-100',
+        'ob'           => 'bg-orange-50 text-orange-700 border-orange-100',
         default        => 'bg-gray-100 text-gray-600 border-gray-200',
     };
 @endphp

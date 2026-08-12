@@ -9,6 +9,10 @@
         @include('components.sidebar-admin')
     @elseif(Auth::user()->isHrStaff())
         @include('components.sidebar-staff')
+    @elseif(Auth::user()->isCs())
+        @include('components.sidebar-cs')
+    @elseif(Auth::user()->isOb())
+        @include('components.sidebar-ob')
     @else
         @include('components.sidebar-assistant')
     @endif

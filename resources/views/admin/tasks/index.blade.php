@@ -207,9 +207,15 @@
                                class="create-recipient-checkbox h-4 w-4 text-primary-600 border-gray-300 rounded">
                         <div>
                             <p class="text-xs sm:text-sm font-medium text-gray-700">{{ $user->name }}</p>
-                            <p class="text-xs text-gray-400">
-                                {{ $user->role === 'hr_staff' ? 'HR Staff' : 'HR Assistant' }}
-                            </p>
+                                <p class="text-xs text-gray-400">
+                                    {{ match($user->role) {
+                                        'hr_staff'     => 'HR Staff',
+                                        'hr_assistant' => 'HR Assistant',
+                                        'cs'           => 'CS',
+                                        'ob'           => 'OB',
+                                        default        => strtoupper($user->role),
+                                    } }}
+                                </p>
                         </div>
                     </label>
                 @endforeach
@@ -279,9 +285,15 @@
                                class="edit-user-checkbox h-4 w-4 text-primary-600 border-gray-300 rounded">
                         <div>
                             <p class="text-xs sm:text-sm font-medium text-gray-700">{{ $user->name }}</p>
-                            <p class="text-xs text-gray-400">
-                                {{ $user->role === 'hr_staff' ? 'HR Staff' : 'HR Assistant' }}
-                            </p>
+                                <p class="text-xs text-gray-400">
+                                    {{ match($user->role) {
+                                        'hr_staff'     => 'HR Staff',
+                                        'hr_assistant' => 'HR Assistant',
+                                        'cs'           => 'CS',
+                                        'ob'           => 'OB',
+                                        default        => strtoupper($user->role),
+                                    } }}
+                                </p>
                         </div>
                     </label>
                 @endforeach
