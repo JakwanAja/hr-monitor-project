@@ -13,20 +13,15 @@
 - [Instalasi & Konfigurasi](#instalasi--konfigurasi)
 - [Database](#database)
 - [Menjalankan Aplikasi](#menjalankan-aplikasi)
-- [Jadwal Otomatis](#jadwal-otomatis)
 - [Kontak Developer](#kontak-developer)
 
 ---
 
 ## Overview
 
-HR-DWMS adalah aplikasi manajemen tugas harian internal perusahaan yang memungkinkan setiap divisi — mulai dari HR, Customer Service, hingga Office Boy — memantau, menerima, dan menyelesaikan tugas secara real-time melalui antarmuka web.
+HR-DWMS adalah aplikasi manajemen tugas harian internal perusahaan yang memungkinkan setiap divisi mulai dari HR, Customer Service, hingga Office Boy memantau, menerima, dan menyelesaikan tugas secara real-time melalui antarmuka web.
 
-> 📸 **[Screenshot Dashboard Admin]**
-
-> 📸 **[Screenshot Dashboard HR Staff]**
-
-> 📸 **[Screenshot Halaman Tugas Hari Ini]**
+![HrMonitor Banner](screenshots/dashboard_admin.png)
 
 **Fitur utama:**
 - Distribusi tugas dari Admin ke semua divisi
@@ -47,8 +42,8 @@ HR-DWMS adalah aplikasi manajemen tugas harian internal perusahaan yang memungki
 | **Admin** | Administrator sistem | Manajemen semua pengguna, buat & pantau semua tugas, laporan, notifikasi, pengaturan aplikasi |
 | **HR Staff** | Staf HR | Tugas harian sendiri, kelola akun HR Assistant, buat tugas untuk HR Assistant, pantau progres Assistant |
 | **HR Assistant** | Asisten HR | Menerima & menyelesaikan tugas (rutin + dari atasan + mandiri), lihat riwayat dan skor |
-| **CS** | Customer Service | Tugas harian sendiri (rutin + dari Admin + mandiri), lihat riwayat — tidak memiliki bawahan |
-| **OB** | Office Boy | Tugas harian sendiri (rutin + dari Admin + mandiri), lihat riwayat — tidak memiliki bawahan |
+| **CS** | Customer Service | Tugas harian sendiri (rutin + dari Admin + mandiri), lihat riwayat |
+| **OB** | Office Boy | Tugas harian sendiri (rutin + dari Admin + mandiri), lihat riwayat |
 
 ---
 
@@ -64,10 +59,7 @@ HR-DWMS adalah aplikasi manajemen tugas harian internal perusahaan yang memungki
 | Database | MySQL | 5.7+ / 8.0+ |
 | Notifikasi | Laravel Notifications (database channel) | — |
 | Penjadwalan | Laravel Task Scheduler (cron) | — |
-| Font | Inter (@fontsource) | ^5.2 |
 | UI Components | Flowbite | ^4.0 |
-| HTTP Client | Axios | ^1.7 |
-| Dev Server | Concurrently | ^9.0 |
 
 **Pola Arsitektur:** Controller → Service → Repository → Model (layered architecture)
 
@@ -77,8 +69,7 @@ app/
 ├── Services/           # Business logic
 ├── Repositories/       # Database query layer
 ├── Models/             # Eloquent models
-├── Notifications/      # Laravel notification classes
-└── Console/Commands/   # Scheduled commands
+└── Notifications/      # Laravel notification classes
 ```
 
 ---
@@ -89,7 +80,7 @@ app/
 
 Pastikan sistem kamu sudah memiliki:
 
-- **PHP** >= 8.2 (dengan ekstensi: `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `ctype`, `json`, `bcmath`, `fileinfo`)
+- **PHP** >= 8.2 
 - **Composer** >= 2.x
 - **Node.js** >= 18.x + **npm**
 - **MySQL** >= 5.7
@@ -100,8 +91,8 @@ Pastikan sistem kamu sudah memiliki:
 ### Langkah 1 — Clone Repository
 
 ```bash
-git clone https://github.com/username/hr-dwms.git
-cd hr-dwms
+git clone https://github.com/JakwanAja/hr-monitor-project.git
+cd hr-monitor-project
 ```
 
 ---
@@ -142,7 +133,7 @@ APP_URL=http://localhost:8000
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=nama_database_kamu
+DB_DATABASE=nama_database
 DB_USERNAME=root
 DB_PASSWORD=password_kamu
 ```
@@ -159,16 +150,28 @@ php artisan key:generate
 
 ### Langkah 6 — Setup Database
 
-> ⚠️ Database tidak disertakan dalam repository ini.  
-> Lihat bagian [Database](#database) di bawah untuk mendapatkan dump database.
+> ⚠️ Database tidak disertakan dalam repository ini, Hubungi developer untuk mendapatkan database. 
+Setelah mendapatkan file (`.sql`), ikuti langkah berikut:
 
-Setelah mendapatkan file dump database, import ke MySQL:
+**1. Buat database baru di MySQL:**
 
+Melalui phpMyAdmin / HeidiSQL: klik **New** → isi nama database → pilih collation `utf8mb4_unicode_ci` → klik **Create**.
+
+**2. Import dump database:**
+
+Via terminal:
 ```bash
-mysql -u root -p nama_database_kamu < hr_dwms.sql
+mysql -u root -p nama_database < hrmonitor_db.sql
 ```
+Via phpMyAdmin: pilih database yang baru dibuat → tab **Import** → pilih file `.sql` → klik **Go**.
 
-Atau import melalui phpMyAdmin / HeidiSQL / tools database lainnya.
+**3. Sesuaikan `.env` dengan nama database yang digunakan:**
+
+```env
+DB_DATABASE=hrmonitor_db
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
 ---
 
@@ -177,46 +180,19 @@ Atau import melalui phpMyAdmin / HeidiSQL / tools database lainnya.
 ```bash
 php artisan storage:link
 ```
-
 Ini diperlukan agar foto profil dan logo aplikasi yang diupload bisa diakses publik.
 
 ---
 
-### Langkah 8 — Buat Akun Admin Pertama
+### Langkah 8 — Build Assets
 
-Akses URL berikut di browser **setelah server dijalankan** (langkah 9):
-
+Untuk **development** :
+```bash
+npm run build
 ```
-http://localhost:8000/setup/seveninc-setup-2024
-```
-
-Jika berhasil, akan muncul response JSON berisi email dan password default:
-
-```json
-{
-  "status": "success",
-  "email": "admin@seveninc.com",
-  "password": "admin123456"
-}
-```
-
-> ⚠️ **Segera ganti password** setelah login pertama kali melalui menu Profil.  
-> Setelah akun admin berhasil dibuat, **hapus atau nonaktifkan route setup** di `routes/web.php` untuk keamanan.
-
----
-
-### Langkah 9 — Build Assets
-
-Untuk **development** (dengan hot reload):
 
 ```bash
 npm run dev
-```
-
-Untuk **production**:
-
-```bash
-npm run build
 ```
 
 ---
@@ -227,12 +203,12 @@ npm run build
 
 Jalankan dua terminal secara bersamaan:
 
-**Terminal 1 — Laravel server:**
+**Terminal 1 - Laravel server:**
 ```bash
 php artisan serve
 ```
 
-**Terminal 2 — Vite dev server (hot reload):**
+**Terminal 2 - Vite dev server:**
 ```bash
 npm run dev
 ```
@@ -241,69 +217,7 @@ Akses aplikasi di: `http://localhost:8000`
 
 ---
 
-### Menggunakan Laragon / XAMPP
+## 👤 Kontributor
+ 
+Dikembangkan oleh **Muhamad Dzakwan Alfaris** Program Studi Teknologi Rekayasa Perangkat Lunak, Politeknik Negeri Madiun (2026)
 
-Jika menggunakan Laragon atau XAMPP, cukup letakkan project di direktori `www/` atau `htdocs/`, lalu akses melalui virtual host yang telah dikonfigurasi. Pastikan Vite sudah di-build dengan:
-
-```bash
-npm run build
-```
-
----
-
-## Database
-
-Database **tidak disertakan** dalam repository ini karena berisi data sensitif perusahaan.
-
-Untuk mendapatkan dump database (struktur + data awal), silakan hubungi developer:
-
-> 📧 **[Hubungi Developer — lihat bagian Kontak di bawah]**
-
-File dump yang akan diberikan mencakup:
-- Struktur semua tabel (`users`, `tasks`, `task_assignments`, `default_tasks`, `notifications`, `app_settings`, `wa_groups`)
-- Data seeder awal (akun admin default, contoh default tasks)
-
----
-
-## Jadwal Otomatis
-
-Aplikasi ini menggunakan dua scheduled command yang harus dijalankan otomatis setiap hari:
-
-| Command | Jadwal | Fungsi |
-|---|---|---|
-| `tasks:generate-daily` | Setiap hari pukul 08:00 | Generate tugas harian otomatis dari daftar Default Tasks |
-| `tasks:mark-not-done` | Setiap hari pukul 23:59 | Tandai tugas default yang belum diselesaikan sebagai "Tidak Dikerjakan" |
-
-### Setup Cron (Linux/Mac)
-
-Tambahkan baris berikut ke crontab server:
-
-```bash
-* * * * * cd /path/to/project && php artisan schedule:run >> /dev/null 2>&1
-```
-
-### Menjalankan Manual (untuk testing)
-
-```bash
-# Generate tugas harian
-php artisan tasks:generate-daily
-
-# Tandai tugas yang tidak dikerjakan
-php artisan tasks:mark-not-done
-```
-
----
-
-## Kontak Developer
-
-Database tidak tersedia secara publik. Untuk mendapatkan dump database atau informasi lebih lanjut mengenai project ini, silakan hubungi:
-
-| | |
-|---|---|
-| **Nama** | [Nama Developer] |
-| **Email** | [email@developer.com] |
-| **GitHub** | [github.com/username] |
-
----
-
-*HR-DWMS — Built with Laravel 12 & Tailwind CSS*
