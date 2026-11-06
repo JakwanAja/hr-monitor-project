@@ -4,8 +4,6 @@
 
 HR-DWMS memungkinkan setiap divisi menerima, membuat, menyelesaikan, dan memantau tugas melalui satu sistem terpusat.
 
-![HR-DWMS Dashboard](screenshots/dashboard_admin.png)
-
 ## Features
  
 - Distribusi tugas dari Admin ke berbagai divisi
